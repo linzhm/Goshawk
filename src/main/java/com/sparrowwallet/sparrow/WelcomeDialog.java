@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow;
 
 import javafx.event.ActionEvent;
@@ -12,7 +13,7 @@ public class WelcomeDialog extends Dialog<Mode> {
     public WelcomeDialog() {
         final DialogPane dialogPane = getDialogPane();
         AppServices.setStageIcon(dialogPane.getScene().getWindow());
-        setTitle("Welcome to Sparrow");
+        setTitle("Welcome to " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME);
         AppServices.onEscapePressed(dialogPane.getScene(), this::close);
 
         try {

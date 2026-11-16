@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.sparrow.AppServices;
@@ -39,11 +40,12 @@ public class DialogImage extends DecorativePane {
     }
 
     protected void refresh(Type type) {
+        String imageId = type == Type.SPARROW ? com.sparrowwallet.sparrow.branding.Branding.ID : type.name().toLowerCase(Locale.ROOT);
         SVGImage svgImage;
         if(AppServices.isDarkTheme()) {
-            svgImage = loadSVGImage("/image/dialog/" + type.name().toLowerCase(Locale.ROOT) + "-invert.svg");
+            svgImage = loadSVGImage("/image/dialog/" + imageId + "-invert.svg");
         } else {
-            svgImage = loadSVGImage("/image/dialog/" + type.name().toLowerCase(Locale.ROOT) + ".svg");
+            svgImage = loadSVGImage("/image/dialog/" + imageId + ".svg");
         }
 
         if(svgImage != null) {

@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.OsType;
@@ -33,20 +34,20 @@ public class TrayManager {
         try {
             List<Image> imgList = new ArrayList<>();
             if(OsType.getCurrent() == OsType.WINDOWS) {
-                imgList.add(ImageIO.read(getClass().getResource("/image/sparrow-black-small.png")));
-                imgList.add(ImageIO.read(getClass().getResource("/image/sparrow-black-small@2x.png")));
-                imgList.add(ImageIO.read(getClass().getResource("/image/sparrow-black-small@3x.png")));
+                imgList.add(ImageIO.read(getClass().getResource(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-black-small.png")));
+                imgList.add(ImageIO.read(getClass().getResource(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-black-small@2x.png")));
+                imgList.add(ImageIO.read(getClass().getResource(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-black-small@3x.png")));
             } else {
-                imgList.add(ImageIO.read(getClass().getResource("/image/sparrow-white-small.png")));
-                imgList.add(ImageIO.read(getClass().getResource("/image/sparrow-white-small@2x.png")));
-                imgList.add(ImageIO.read(getClass().getResource("/image/sparrow-white-small@3x.png")));
+                imgList.add(ImageIO.read(getClass().getResource(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-white-small.png")));
+                imgList.add(ImageIO.read(getClass().getResource(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-white-small@2x.png")));
+                imgList.add(ImageIO.read(getClass().getResource(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-white-small@3x.png")));
             }
 
             BaseMultiResolutionImage mrImage = new BaseMultiResolutionImage(imgList.toArray(new Image[0]));
 
-            this.trayIcon = new TrayIcon(mrImage, "Sparrow", popupMenu);
+            this.trayIcon = new TrayIcon(mrImage, com.sparrowwallet.sparrow.SparrowWallet.APP_NAME, popupMenu);
 
-            MenuItem miExit = new MenuItem("Quit Sparrow");
+            MenuItem miExit = new MenuItem("Quit " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME);
             miExit.addActionListener(e -> {
                 SwingUtilities.invokeLater(() -> { tray.remove(this.trayIcon); });
                 Platform.exit();

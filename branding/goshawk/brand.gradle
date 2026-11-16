@@ -1,0 +1,80 @@
+// Goshawk product layer. Upstream resources remain unchanged in src/main/resources.
+def brandRoot = project.file('branding/goshawk')
+def overlayRoot = new File(brandRoot, 'resources')
+def upstreamResources = project.file('src/main/resources').toPath()
+
+sourceSets.main.java.srcDir(new File(brandRoot, 'src'))
+sourceSets.main.resources.srcDir(overlayRoot)
+
+tasks.named('processResources') {
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    // Resolve overrides explicitly, independent of source-directory ordering.
+    eachFile { detail ->
+        if(detail.file.toPath().startsWith(upstreamResources)
+                && new File(overlayRoot, detail.path).isFile()) {
+            detail.exclude()
+        }
+    }
+    from(project.file('LICENSE')) { into 'legal' }
+    from(project.file('NOTICE')) { into 'legal' }
+    from(project.file('MODIFICATIONS.md')) { into 'legal' }
+    from(project.file('THIRD_PARTY.md')) { into 'legal' }
+    from(project.file('drongo/LICENSE')) { into 'legal/drongo' }
+    from(project.file('lark/LICENSE')) { into 'legal/lark' }
+    from(project.file('scripts/brand/OFL.txt')) { into 'legal/space-grotesk' }
+}
+
+// Preserve legal material before jlink excludes META-INF resources from merged modules.
+tasks.register('collectThirdPartyNotices') {
+    dependsOn configurations.runtimeClasspath
+    inputs.files(configurations.runtimeClasspath)
+    def destination = layout.buildDirectory.dir('generated-legal')
+    outputs.dir(destination)
+    doLast {
+        def output = destination.get().asFile
+        project.delete(output)
+        output.mkdirs()
+        def inventory = []
+        configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.sort { it.file.name }.each { artifact ->
+            def coordinate = artifact.moduleVersion.id.toString()
+            def label = "${coordinate}-${artifact.file.name}".replaceAll('[^a-zA-Z0-9._-]', '_')
+            def notices = []
+            if(artifact.file.name.endsWith('.jar')) {
+                project.copy {
+                    from project.zipTree(artifact.file)
+                    into new File(output, label)
+                    include { detail ->
+                        def basename = detail.name.toLowerCase(Locale.ROOT)
+                        !detail.directory && !basename.endsWith('.class') && (basename.startsWith('license') || basename.startsWith('licence')
+                                || basename.startsWith('notice') || basename.startsWith('copying')
+                                || basename.startsWith('copyright') || basename == 'ofl.txt')
+                    }
+                    eachFile { notices.add(it.path) }
+                    includeEmptyDirs = false
+                }
+            }
+            inventory.add("${coordinate}\t${artifact.file.name}\t${notices.isEmpty() ? 'NO EMBEDDED NOTICE — consult component source' : notices.join(', ')}")
+        }
+        new File(output, 'COMPONENTS.tsv').text = "Component\tArtifact\tEmbedded legal files\n" + inventory.join('\n') + '\n'
+    }
+}
+
+tasks.register('copyGoshawkLegal', Copy) {
+    dependsOn tasks.named('jlink'), tasks.named('collectThirdPartyNotices')
+    from('LICENSE', 'NOTICE', 'MODIFICATIONS.md', 'THIRD_PARTY.md')
+    from('docs/upstream/SPARROW-README.md')
+    from('drongo/LICENSE') { into 'drongo' }
+    from('lark/LICENSE') { into 'lark' }
+    from('scripts/brand/OFL.txt') { into 'space-grotesk' }
+    from(layout.buildDirectory.dir('generated-legal')) { into 'third-party' }
+    into(layout.buildDirectory.dir('image/legal/goshawk'))
+}
+tasks.named('jpackageImage') { dependsOn tasks.named('copyGoshawkLegal') }
+distributions.main.contents {
+    from('LICENSE', 'NOTICE', 'MODIFICATIONS.md', 'THIRD_PARTY.md') { into 'legal/goshawk' }
+    from('drongo/LICENSE') { into 'legal/goshawk/drongo' }
+    from('lark/LICENSE') { into 'legal/goshawk/lark' }
+    from('scripts/brand/OFL.txt') { into 'legal/goshawk/space-grotesk' }
+    from('docs/upstream/SPARROW-README.md') { into 'legal/goshawk' }
+    from(tasks.named('collectThirdPartyNotices')) { into 'legal/goshawk/third-party' }
+}

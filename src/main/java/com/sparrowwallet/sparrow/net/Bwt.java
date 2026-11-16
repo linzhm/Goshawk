@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.net;
 
 import com.google.common.net.HostAndPort;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 public class Bwt {
     private static final Logger log = LoggerFactory.getLogger(Bwt.class);
 
-    public static final String DEFAULT_CORE_WALLET = "sparrow";
+    public static final String DEFAULT_CORE_WALLET = "goshawk";
     public static final String ELECTRUM_PORT = "0";
     private static final int IMPORT_BATCH_SIZE = 350;
     private static boolean initialized;

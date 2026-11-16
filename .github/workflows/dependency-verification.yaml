@@ -1,9 +1,8 @@
+# Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 name: Dependency Verification
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '17 3 * * *'
 
 permissions:
   contents: read
@@ -176,11 +175,11 @@ jobs:
           git commit -m "Update Gradle dependency verification metadata"
           git push --force-with-lease origin "HEAD:$BRANCH_NAME"
 
-          if gh pr list --base master --head "$BRANCH_NAME" --json number --jq '.[0].number' | grep -q .; then
+          if gh pr list --base "${{ github.event.repository.default_branch }}" --head "$BRANCH_NAME" --json number --jq '.[0].number' | grep -q .; then
             echo "Existing dependency verification PR found; branch was updated."
           else
             gh pr create \
-              --base master \
+              --base "${{ github.event.repository.default_branch }}" \
               --head "$BRANCH_NAME" \
               --title "Update Gradle dependency verification metadata" \
               --body "Regenerates Gradle dependency verification metadata across Linux, Windows, and macOS using Gradle's incremental verification metadata update flow."

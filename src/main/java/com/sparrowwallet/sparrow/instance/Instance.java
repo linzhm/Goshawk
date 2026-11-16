@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.instance;
 
 import com.sparrowwallet.sparrow.io.Storage;
@@ -25,7 +26,7 @@ import java.util.Set;
 
 public abstract class Instance {
     private static final Logger log = LoggerFactory.getLogger(Instance.class);
-    private static final String LINK_ENV_PROPERTY = "SPARROW_NO_LOCK_FILE_LINK";
+    private static final String LINK_ENV_PROPERTY = "GOSHAWK_NO_LOCK_FILE_LINK";
 
     public final String applicationId;
     private final boolean autoExit;
@@ -106,7 +107,7 @@ public abstract class Instance {
         });
 
         thread.setDaemon(true);
-        thread.setName("SparrowInstanceListener");
+        thread.setName(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + "InstanceListener");
         thread.start();
 
         createSymlink(lockFile);

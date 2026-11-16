@@ -1,0 +1,33 @@
+Goshawk
+
+Goshawk is an independently maintained derivative of Sparrow Wallet.
+Sparrow Wallet was created by Craig Raw and its contributors.
+Upstream: https://github.com/sparrowwallet/sparrow
+Website: https://sparrowwallet.com
+Upstream baseline: ddb486dd37ddfa4071e95a81e5c78298433073b6 (2.5.7)
+
+The original Apache License, Version 2.0 is included unchanged in LICENSE.
+Original copyright, patent, trademark and attribution notices are retained.
+Goshawk is not an official Sparrow release and does not imply endorsement
+by Craig Raw, the Sparrow project or other upstream contributors.
+
+Acknowledgements
+
+- Sparrow Wallet, Craig Raw and all contributors: the desktop wallet,
+  transaction inspection interface, wallet management and build foundation.
+- Drongo and its contributors: Bitcoin wallet and transaction library.
+  https://github.com/sparrowwallet/drongo
+- Lark and its contributors: hardware wallet communication library.
+  https://github.com/sparrowwallet/lark
+- BSV Desktop and its contributors: reference for the planned BSV payment
+  and recovery workflows. No BSV Desktop implementation is copied in this
+  branding change. https://github.com/bsv-blockchain/bsv-desktop
+- Space Grotesk Project Authors: the brand wordmark font, under the
+  SIL Open Font License 1.1. Its license is included separately.
+- YourKit: the upstream README credits the YourKit Java Profiler and
+  YourKit's support for open-source projects. That original credit is
+  preserved verbatim in docs/upstream/SPARROW-README.md.
+
+Goshawk modifications are described in MODIFICATIONS.md. Third-party
+components remain governed by their respective licenses; see THIRD_PARTY.md.
+This NOTICE provides attribution and does not change any license terms.

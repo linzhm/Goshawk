@@ -1,0 +1,16 @@
+/* Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained. */
+.title-area {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-padding: 22 25 22 25;
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-color: #e5e5e6;
+}
+
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.content-area, .button-area {
+    -fx-padding: 10 25 25 25;
+}

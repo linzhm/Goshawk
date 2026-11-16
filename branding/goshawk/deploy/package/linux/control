@@ -1,0 +1,11 @@
+X-Goshawk-Modified: 2026-11-16; see MODIFICATIONS.md. Original notices retained.
+Package: goshawkwallet
+Version: ${version}-1
+Section: utils
+Maintainer: Goshawk contributors <linzhm@users.noreply.github.com>
+Priority: optional
+Architecture: ${arch}
+Provides: goshawkwallet
+Description: Goshawk Wallet
+Depends: libasound2, libbsd0, libc6, libmd0, libx11-6, libxau6, libxcb1, libxdmcp6, libxext6, libxi6, libxrender1, libxtst6, xdg-utils
+Installed-Size: ${size}

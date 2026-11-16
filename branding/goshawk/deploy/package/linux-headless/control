@@ -1,0 +1,11 @@
+X-Goshawk-Modified: 2026-11-16; see MODIFICATIONS.md. Original notices retained.
+Package: goshawkserver
+Version: ${version}-1
+Section: utils
+Maintainer: Goshawk contributors <linzhm@users.noreply.github.com>
+Priority: optional
+Architecture: ${arch}
+Provides: goshawkserver
+Description: Goshawk Server
+Depends: libc6, zlib1g
+Installed-Size: ${size}

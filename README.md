@@ -1,125 +1,64 @@
-# Sparrow Bitcoin Wallet
+<!-- Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained. -->
+# Goshawk
 
-Sparrow is a modern desktop Bitcoin wallet application supporting most hardware wallets and built on common standards such as PSBT, with an emphasis on transparency and usability.
+![Goshawk](docs/brand/goshawk-lockup.svg)
 
-More information (and release binaries) can be found at https://sparrowwallet.com. Release binaries are also available directly from [GitHub](https://github.com/sparrowwallet/sparrow/releases).
+**苍鹰 · A clear view of your money.**
 
-![Sparrow Wallet](https://sparrowwallet.com/assets/images/control-your-sends.png)
+Goshawk is an independent desktop wallet project for BSV, built on
+[Sparrow Wallet](https://sparrowwallet.com). The first product focuses on
+payments, UTXO control, transaction inspection, and backup and recovery.
 
-## Building
+**Current status: development preview.** The current implementation is the
+Sparrow foundation with Goshawk branding and isolated application identity.
+It still contains Sparrow's Bitcoin backend. BSV signing, WOC address receipt
+conversion, and peer-to-peer SPV payment delivery are planned, not implemented.
+This is not a usable BSV release.
 
-To clone this project, use
+## Development
 
-`git clone --recursive git@github.com:sparrowwallet/sparrow.git`
-
-or for those without SSH credentials:
-
-`git clone --recursive https://github.com/sparrowwallet/sparrow.git`
-
-In order to build, Sparrow requires Java 25 or higher to be installed. 
-The release binaries are built with [Eclipse Temurin 25.0.5+8](https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.5%2B8).
-If you are using [SDKMAN](https://sdkman.io/), you can use `sdk env install` to ensure you have the correct version.
-
-Other packages may also be necessary to build depending on the platform. On Debian/Ubuntu systems:
-
-`sudo apt install -y rpm fakeroot binutils`
-
-The Sparrow binaries can be built from source using
-
-`./gradlew jpackage`
-
-On Linux distributions without `deb` or `rpm` packaging tools installed (such as Arch), building the installers can be skipped with
-
-`./gradlew jpackage -PskipInstallers=true`
-
-Note that to build the Windows installer, you will need to install [WiX](https://github.com/wixtoolset/wix3/releases).
-
-When updating to the latest HEAD
-
-`git pull --recurse-submodules`
-
-The release binaries are reproducible from v1.5.0 onwards (pre codesigning and installer packaging). More detailed [instructions on reproducing the binaries](docs/reproducible.md) are provided.
-
-> Video documentation of your build process uploaded to [bitcoinbinary.org](https://bitcoinbinary.org/) is appreciated. Alternatively check the site if you wish to see if someone else already verified the provided binaries. 
-
-## Running
-
-If you prefer to run Sparrow directly from source, it can be launched from within the project directory with
-
-`./sparrow`
-
-Java 25 or higher must be installed. 
-
-## Configuration
-
-Sparrow has a number of command line options, for example to change its home folder or use testnet:
-
-```
-./sparrow -h
-
-Usage: sparrow [options]
-  Options:
-    --dir, -d
-      Path to Sparrow home folder
-    --help, -h
-      Show usage
-    --level, -l
-      Set log level
-      Possible Values: [ERROR, WARN, INFO, DEBUG, TRACE]      
-    --network, -n
-      Network to use
-      Possible Values: [mainnet, testnet, regtest, signet, testnet4]
+```sh
+git clone --recurse-submodules https://github.com/linzhm/Goshawk.git
+cd Goshawk
+./gradlew test
+./goshawk
 ```
 
-Note that testnet currently refers to testnet3.
+Use Java 25. The current Gradle wrapper does not run on Java 27.
+The upstream build targets Java 25. `./goshawk.bat` is the Windows launcher.
+Create a native application image with `./gradlew jpackageImage`; installer
+tooling is platform-specific. Goshawk does not inherit Sparrow's release
+signature, signing identity or claims of reproducible released binaries.
 
-As a fallback, the network (mainnet, testnet, testnet4, regtest or signet) can also be set using an environment variable `SPARROW_NETWORK`. For example:
+Goshawk uses `~/.goshawk` on macOS/Linux and `%APPDATA%/Goshawk` on Windows.
+Its optional XDG directories use `goshawk`, its log is `goshawk.log`, and its
+network override is `GOSHAWK_NETWORK`. Use `./goshawk -h` for CLI options.
+Existing Sparrow directories are not migrated or opened automatically.
 
-`export SPARROW_NETWORK=testnet`
+## Product and upstream boundaries
 
-A final fallback which can be useful when running the Sparrow binary is to create a file called ``network-testnet`` in the Sparrow home folder (see below) to configure the testnet network.
+- [Architecture and BSV integration plan](docs/goshawk-architecture.md)
+- [BSV transactions and hardware signing plan](docs/hardware-bsv.md)
+- [Brand assets and visual identity](docs/brand/README.md)
+- [Upstream synchronization](docs/upstream-maintenance.md)
+- [Modification record](MODIFICATIONS.md)
+- [Branding validation](docs/validation-branding.md)
 
-Note that if you are connecting to an Electrum server when using testnet, that server will need to be running on testnet configuration as well.
+Brand resources, packaging resources and product configuration live in
+`branding/goshawk/`. Original Java package names and upstream resource files
+remain in place to keep the adaptation small and future merges reviewable.
 
-When not explicitly configured using the command line argument above, Sparrow stores its mainnet config file, log file and wallets in a home folder location appropriate to the operating system:
+## Acknowledgements and license
 
-| Platform | Location |
-|----------| -------- |
-| macOS    | ~/.sparrow |
-| Linux    | ~/.sparrow |
-| Windows  | %APPDATA%/Sparrow |
+Goshawk is based on Sparrow Wallet by **Craig Raw and its contributors**.
+We thank Sparrow, Drongo, Lark and the wider open-source community for the
+foundation, and BSV Desktop for informing the planned payment workflows.
+Goshawk is independently maintained and is not an official Sparrow release.
 
-Testnet3, testnet4, regtest and signet configurations (along with their wallets) are stored in subfolders to allow easy switching between networks.
+The original [Apache License 2.0](LICENSE) is retained unchanged. See
+[NOTICE](NOTICE), [third-party notices](THIRD_PARTY.md), and the
+[unaltered upstream README](docs/upstream/SPARROW-README.md), including its
+YourKit credit. Third-party components retain their own licenses.
 
-On macOS and Linux, Sparrow also supports the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/). 
-This is opt in: for each category below, if the corresponding directory already exists, Sparrow uses it, otherwise it continues to use the home folder above. Categories are resolved independently, so files can be moved across one at a time.
-
-| Category | Location | Contents                              |
-|----------| -------- |---------------------------------------|
-| Config   | `$XDG_CONFIG_HOME/sparrow` (default `~/.config/sparrow`) | `config`, `network-*` markers         |
-| Data     | `$XDG_DATA_HOME/sparrow` (default `~/.local/share/sparrow`) | `wallets`, `certs`, `lark`            |
-| State    | `$XDG_STATE_HOME/sparrow` (default `~/.local/state/sparrow`) | `sparrow.log`, `tor/work`, lock files |
-| Cache    | `$XDG_CACHE_HOME/sparrow` (default `~/.cache/sparrow`) | `tor/cache`                           |
-
-Specifying a home folder with the `-d` argument disables XDG resolution entirely, and stores all files in the given folder.
-
-## Reporting Issues
-
-Please use the [Issues](https://github.com/sparrowwallet/sparrow/issues) tab above to report an issue. If possible, look in the sparrow.log file in the configuration directory for information helpful in debugging. 
-
-## License
-
-Sparrow is licensed under the Apache 2 software licence.
-
-## GPG Key
-
-The Sparrow release binaries here and on [sparrowwallet.com](https://sparrowwallet.com/download/) are signed using [craigraw's GPG key](https://keybase.io/craigraw):  
-Fingerprint: D4D0D3202FC06849A257B38DE94618334C674B40  
-64-bit: E946 1833 4C67 4B40
-
-## Credit
-
-![Yourkit](https://www.yourkit.com/images/yklogo.png)
-
-Sparrow Wallet uses the [Yourkit Java Profiler](https://www.yourkit.com/java/profiler/) to profile and improve performance. 
-YourKit supports open source projects with useful tools for monitoring and profiling Java and .NET applications.
+[Sparrow source](https://github.com/sparrowwallet/sparrow) ·
+[Support Sparrow](https://sparrowwallet.com/donate)

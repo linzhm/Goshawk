@@ -1,4 +1,5 @@
-rootProject.name = 'sparrow'
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
+rootProject.name = 'goshawk'
 include 'drongo'
 include 'lark'
 

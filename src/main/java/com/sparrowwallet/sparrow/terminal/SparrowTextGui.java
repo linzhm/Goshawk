@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.terminal;
 
 import com.google.common.eventbus.Subscribe;
@@ -39,7 +40,7 @@ public class SparrowTextGui extends MultiWindowTextGUI {
         Panel panel = new Panel(new BorderLayout());
 
         titleBar = new Panel(new GridLayout(3));
-        new Label("Sparrow Terminal").addTo(titleBar);
+        new Label(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " Terminal").addTo(titleBar);
         this.proxyStatusLabel = new ProxyStatusLabel();
         titleBar.addComponent(proxyStatusLabel, GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, true, false));
         this.connectedLabel = new Label("Disconnected");

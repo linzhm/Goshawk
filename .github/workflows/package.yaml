@@ -1,4 +1,5 @@
-name: Package
+# Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
+name: Package Goshawk (unsigned development build)
 
 on: workflow_dispatch
 
@@ -30,16 +31,9 @@ jobs:
         run: ./gradlew -v
       - name: Build with Gradle
         run: ./gradlew jpackage
-      - name: Codesign, package and notarize macOS distribution
+      - name: Package macOS development archive
         if: ${{ runner.os == 'macOS' }}
-        uses: sparrowwallet/github-actions/codesign-macos@2cf7ea991d8c6fe7afe734898d0d0e748a3f3dac # v1
-        with:
-          app-name: Sparrow
-          certificate: ${{ secrets.MACOS_CERTIFICATE }}
-          certificate-password: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
-          apple-id: ${{ secrets.MACOS_NOTARIZATION_APPLE_ID }}
-          team-id: ${{ secrets.MACOS_NOTARIZATION_TEAM_ID }}
-          notarization-password: ${{ secrets.MACOS_NOTARIZATION_PASSWORD }}
+        run: ./gradlew packageZipDistribution
       - name: Package Windows zip distribution
         if: ${{ runner.os == 'Windows' }}
         run: ./gradlew packageZipDistribution
@@ -52,11 +46,11 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: Sparrow Build - ${{ runner.os }} ${{ runner.arch }}
+          name: Goshawk Build - ${{ runner.os }} ${{ runner.arch }}
           path: |
             build/jpackage/*
-            !build/jpackage/Sparrow/
-            !build/jpackage/Sparrow.app/
+            !build/jpackage/Goshawk/
+            !build/jpackage/Goshawk.app/
       - name: Headless build with Gradle
         if: ${{ runner.os == 'Linux' }}
         run: ./gradlew -Djava.awt.headless=true clean jpackage
@@ -70,7 +64,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: Sparrow Build - ${{ runner.os }} ${{ runner.arch }} Headless
+          name: Goshawk Build - ${{ runner.os }} ${{ runner.arch }} Headless
           path: |
             build/jpackage/*
-            !build/jpackage/Sparrow/
+            !build/jpackage/Goshawk/

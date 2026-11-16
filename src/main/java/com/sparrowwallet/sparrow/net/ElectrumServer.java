@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.net;
 
 import com.google.common.eventbus.Subscribe;
@@ -291,7 +292,7 @@ public class ElectrumServer {
     }
 
     public List<String> getServerVersion() throws ServerException {
-        return electrumServerRpc.getServerVersion(getTransport(), "Sparrow", SUPPORTED_VERSIONS);
+        return electrumServerRpc.getServerVersion(getTransport(), com.sparrowwallet.sparrow.SparrowWallet.APP_NAME, SUPPORTED_VERSIONS);
     }
 
     public ServerFeatures getServerFeatures() throws ServerException {

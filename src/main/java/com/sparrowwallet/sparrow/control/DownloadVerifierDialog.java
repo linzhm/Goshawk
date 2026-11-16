@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.OsType;
@@ -141,7 +142,7 @@ public class DownloadVerifierDialog extends Dialog<ButtonBar.ButtonData> {
         releaseLink.setOnAction(event -> {
             if(release.get() != null && release.get().exists()) {
                 if(release.get().getName().toLowerCase(Locale.ROOT).startsWith("sparrow")) {
-                    Optional<ButtonType> optType = AppServices.showAlertDialog("Exit Sparrow?", "Sparrow must be closed before installation. Exit?", Alert.AlertType.CONFIRMATION, ButtonType.NO, ButtonType.YES);
+                    Optional<ButtonType> optType = AppServices.showAlertDialog("Exit " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + "?", com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " must be closed before installation. Exit?", Alert.AlertType.CONFIRMATION, ButtonType.NO, ButtonType.YES);
                     if(optType.isPresent() && optType.get() == ButtonType.YES) {
                         javafx.application.Platform.exit();
                         AppServices.get().getApplication().getHostServices().showDocument("file://" + release.get().getAbsolutePath());

@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow;
 
 import com.google.common.eventbus.Subscribe;
@@ -262,7 +263,7 @@ public class AppServices {
             restartService(ratesService);
         }
 
-        if(config.isCheckNewVersions() && Network.get() == Network.MAINNET && Interface.get() == Interface.DESKTOP) {
+        if(com.sparrowwallet.sparrow.branding.Branding.UPDATES_ENABLED && config.isCheckNewVersions() && Network.get() == Network.MAINNET && Interface.get() == Interface.DESKTOP) {
             restartService(versionCheckService);
         }
 
@@ -646,7 +647,7 @@ public class AppServices {
             Scene scene = new Scene(root);
             scene.getStylesheets().add(AppServices.class.getResource("app.css").toExternalForm());
 
-            stage.setTitle("Sparrow");
+            stage.setTitle(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME);
             stage.setMinWidth(650);
             stage.setMinHeight(708);
             stage.setScene(scene);
@@ -691,7 +692,7 @@ public class AppServices {
 
     private static Image getWindowIcon() {
         if(windowIcon == null) {
-            windowIcon = new Image(SparrowWallet.class.getResourceAsStream("/image/sparrow-icon.png"));
+            windowIcon = new Image(SparrowWallet.class.getResourceAsStream(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + "-icon.png"));
         }
 
         return windowIcon;
@@ -1528,7 +1529,7 @@ public class AppServices {
     public void versionCheckStatus(VersionCheckStatusEvent event) {
         versionCheckService.cancel();
 
-        if(Config.get().getMode() != Mode.OFFLINE && event.isEnabled() && Network.get() == Network.MAINNET) {
+        if(com.sparrowwallet.sparrow.branding.Branding.UPDATES_ENABLED && Config.get().getMode() != Mode.OFFLINE && event.isEnabled() && Network.get() == Network.MAINNET) {
             versionCheckService = createVersionCheckService();
             versionCheckService.start();
         }

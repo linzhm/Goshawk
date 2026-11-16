@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.wallet.*;
@@ -186,7 +187,7 @@ public class WalletIcon extends DecorativePane {
                 }
 
                 private static InputStream getFallbackIconStream() {
-                    return WalletIconStreamHandler.class.getResourceAsStream("/image/sparrow.png");
+                    return WalletIconStreamHandler.class.getResourceAsStream(com.sparrowwallet.sparrow.branding.Branding.IMAGE_PREFIX + ".png");
                 }
             };
         }

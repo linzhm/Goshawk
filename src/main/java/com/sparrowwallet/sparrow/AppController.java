@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow;
 
 import com.beust.jcommander.JCommander;
@@ -285,7 +286,7 @@ public class AppController implements Initializable {
             closeTab.setDisable(tabs.getTabs().isEmpty());
             if(tabs.getTabs().isEmpty()) {
                 Stage tabStage = (Stage) tabs.getScene().getWindow();
-                tabStage.setTitle("Sparrow");
+                tabStage.setTitle(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME);
                 saveTransaction.setVisible(true);
                 saveTransaction.setDisable(true);
                 exportWallet.setDisable(true);
@@ -531,11 +532,11 @@ public class AppController implements Initializable {
     }
 
     public void showDocumentation(ActionEvent event) {
-        AppServices.get().getApplication().getHostServices().showDocument("https://sparrowwallet.com/docs");
+        AppServices.get().getApplication().getHostServices().showDocument(com.sparrowwallet.sparrow.branding.Branding.DOCUMENTATION);
     }
 
     public void showLogFile(ActionEvent event) throws IOException {
-        File logFile = new File(Storage.getStateHome(), "sparrow.log");
+        File logFile = new File(Storage.getStateHome(), "goshawk.log");
         if(logFile.exists()) {
             AppServices.get().getApplication().getHostServices().showDocument(logFile.toPath().toUri().toString());
         } else {
@@ -544,17 +545,17 @@ public class AppController implements Initializable {
     }
 
     public void openSupport(ActionEvent event) {
-        AppServices.get().getApplication().getHostServices().showDocument("https://sparrowwallet.com/opensupport");
+        AppServices.get().getApplication().getHostServices().showDocument(com.sparrowwallet.sparrow.branding.Branding.ISSUES);
     }
 
     public void submitBugReport(ActionEvent event) {
         ButtonType supportType = new ButtonType("Get Support", ButtonBar.ButtonData.LEFT);
         ButtonType bugType = new ButtonType("Submit Bug Report", ButtonBar.ButtonData.YES);
-        Optional<ButtonType> optResponse = showWarningDialog("Submit Bug Report", "Please note that this facility is for bug reports and feature requests only. There is a community of Sparrow users who can assist with support requests.", supportType, bugType);
+        Optional<ButtonType> optResponse = showWarningDialog("Submit Bug Report", "Report " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " issues in the " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " repository. Please do not send fork-specific issues to the Sparrow project.", supportType, bugType);
 
         if(optResponse.isPresent()) {
             if(optResponse.get() == bugType) {
-                AppServices.get().getApplication().getHostServices().showDocument("https://sparrowwallet.com/submitbugreport");
+                AppServices.get().getApplication().getHostServices().showDocument(com.sparrowwallet.sparrow.branding.Branding.ISSUES + "/new");
             } else {
                 openSupport(event);
             }
@@ -603,16 +604,16 @@ public class AppController implements Initializable {
 
     public void installUdevRules(ActionEvent event) {
         String commands = """
-                sudo install -m 644 /opt/sparrowwallet/lib/runtime/conf/udev/*.rules /etc/udev/rules.d
+                sudo install -m 644 /opt/goshawkwallet/lib/runtime/conf/udev/*.rules /etc/udev/rules.d
                 sudo udevadm control --reload
                 sudo udevadm trigger
                 sudo groupadd -f -r plugdev
                 sudo usermod -aG plugdev `whoami`
                 """;
         String home = System.getProperty(SparrowWallet.JPACKAGE_APP_PATH);
-        if(home != null && !home.startsWith("/opt/sparrowwallet") && home.endsWith("bin/Sparrow")) {
-            home = home.replace("bin/Sparrow", "");
-            commands = commands.replace("/opt/sparrowwallet/", home);
+        if(home != null && !home.startsWith("/opt/goshawkwallet") && home.endsWith("bin/" + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME)) {
+            home = home.replace("bin/" + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME, "");
+            commands = commands.replace("/opt/goshawkwallet/", home);
         }
 
         TextAreaDialog dialog = new TextAreaDialog(commands, false);
@@ -729,7 +730,7 @@ public class AppController implements Initializable {
                 Platform.runLater(() -> {
                     Throwable e = failEvent.getSource().getException();
                     log.error("Error fetching transaction " + txId.toString(), e);
-                    showErrorDialog("Error fetching transaction", "The server returned an error when fetching the transaction. The server response is contained in sparrow.log");
+                    showErrorDialog("Error fetching transaction", "The server returned an error when fetching the transaction. The server response is contained in goshawk.log");
                 });
             });
             transactionReferenceService.start();
@@ -1065,7 +1066,7 @@ public class AppController implements Initializable {
 
         Stage window = new Stage();
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Choose Sparrow Home Folder");
+        directoryChooser.setTitle("Choose " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " Home Folder");
         directoryChooser.setInitialDirectory(initialDir == null || !initialDir.exists() ? Storage.getDefaultHome() : initialDir);
         File newHome = directoryChooser.showDialog(window);
 
@@ -1190,7 +1191,7 @@ public class AppController implements Initializable {
             }
             if(!sameDir) {
                 ConfirmationAlert alert = new ConfirmationAlert("Change wallets directory?",
-                    "Do you want to configure Sparrow to use " + selectedDir + " as the default wallets directory?", ButtonType.NO, ButtonType.YES);
+                    "Do you want to configure " + com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " to use " + selectedDir + " as the default wallets directory?", ButtonType.NO, ButtonType.YES);
                 Optional<ButtonType> optType = alert.showAndWait();
                 if(optType.isPresent() && optType.get() == ButtonType.YES) {
                     Config.get().setWalletsDir(selectedDir);
@@ -2314,7 +2315,7 @@ public class AppController implements Initializable {
         String outputDesc = unknownScriptOutputs.size() == 1 ? "an output" : unknownScriptOutputs.size() + " outputs";
         Optional<ButtonType> result = AppServices.showWarningDialog("Unknown Script Type",
                 "This transaction contains " + outputDesc + " of a non-standard or unrecognised script type, totalling " + amount + ".\n\n" +
-                        "Sparrow cannot resolve these outputs to addresses, so they will not appear in the transaction diagram. " +
+                        com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " cannot resolve these outputs to addresses, so they will not appear in the transaction diagram. " +
                         "Review the individual output(s) in the transaction tree carefully before signing or broadcasting.\n\n" +
                         "Open the transaction?", ButtonType.YES, ButtonType.NO);
         return result.isPresent() && result.get() == ButtonType.YES;
@@ -2816,7 +2817,7 @@ public class AppController implements Initializable {
             String tabName = event.getTabName();
             if(tabs.getScene() != null) {
                 Stage tabStage = (Stage)tabs.getScene().getWindow();
-                tabStage.setTitle("Sparrow - " + tabName);
+                tabStage.setTitle(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " - " + tabName);
             }
 
             if(event instanceof TransactionTabSelectedEvent) {
@@ -2966,12 +2967,12 @@ public class AppController implements Initializable {
                 }
 
                 Notifications notificationBuilder = Notifications.create()
-                        .title("Sparrow - " + walletName)
+                        .title(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " - " + walletName)
                         .text(text)
                         .graphic(new DialogImage(DialogImage.Type.SPARROW))
                         .hideAfter(Duration.seconds(15))
                         .position(Pos.TOP_RIGHT)
-                        .threshold(5, Notifications.create().title("Sparrow").text("Multiple new wallet transactions").graphic(new DialogImage(DialogImage.Type.SPARROW)))
+                        .threshold(5, Notifications.create().title(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME).text("Multiple new wallet transactions").graphic(new DialogImage(DialogImage.Type.SPARROW)))
                         .onAction(e -> selectTab(event.getWallet()));
 
                 //If controlsfx can't find our window, we must set the window ourselves (unfortunately notification is then shown within this window)
@@ -3008,10 +3009,10 @@ public class AppController implements Initializable {
 
     @Subscribe
     public void versionUpdated(VersionUpdatedEvent event) {
-        Hyperlink versionUpdateLabel = new Hyperlink("Sparrow " + event.getVersion() + " available");
+        Hyperlink versionUpdateLabel = new Hyperlink(com.sparrowwallet.sparrow.SparrowWallet.APP_NAME + " " + event.getVersion() + " available");
         versionUpdateLabel.getStyleClass().add("version-hyperlink");
         versionUpdateLabel.setOnAction(event1 -> {
-            AppServices.get().getApplication().getHostServices().showDocument("https://www.sparrowwallet.com/download");
+            AppServices.get().getApplication().getHostServices().showDocument(com.sparrowwallet.sparrow.branding.Branding.REPOSITORY + "/releases");
         });
 
         Hyperlink existingUpdateLabel = null;

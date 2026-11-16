@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
@@ -21,7 +22,7 @@ def headless = "true".equals(System.getProperty("java.awt.headless"))
 def skipInstallers = "true".equals(findProperty("skipInstallers"))
 
 group = 'com.sparrowwallet'
-version = '2.5.7'
+version = '0.1.0'
 
 repositories {
     mavenCentral()
@@ -179,7 +180,7 @@ application {
                                  "--add-reads=kotlin.stdlib=kotlinx.coroutines.core"]
 
     if(os.macOsX) {
-        applicationDefaultJvmArgs += ["-Dprism.lcdtext=false", "-Dprism.maxTextureSize=8192", "-Xdock:name=Sparrow"]
+        applicationDefaultJvmArgs += ["-Dprism.lcdtext=false", "-Dprism.maxTextureSize=8192", "-Xdock:name=Goshawk"]
     }
     if(headless) {
         applicationDefaultJvmArgs += ["-Dglass.platform=Headless"]
@@ -231,7 +232,7 @@ jlink {
                    'glob:/io.github.doblon8.jzbar/native/**,' +
                    'glob:/io.github.doblon8.openpnp.capture/native/**']
     launcher {
-        name = 'sparrow'
+        name = 'goshawk'
         jvmArgs = ["--enable-native-access=com.sparrowwallet.drongo",
                    "--enable-native-access=com.sun.jna",
                    "--enable-native-access=javafx.graphics",
@@ -282,31 +283,31 @@ jlink {
     }
     addExtraDependencies("javafx")
     jpackage {
-        imageName = "Sparrow"
-        installerName = "Sparrow"
-        appVersion = "${version}"
+        imageName = "Goshawk"
+        installerName = "Goshawk"
+        // macOS jpackage rejects a zero major version; the custom plist retains the product version.
+        appVersion = os.macOsX ? "1.0.0" : "${version}"
         skipInstaller = os.macOsX || skipInstallers
         imageOptions = []
-        installerOptions = ['--file-associations', 'src/main/deploy/psbt.properties', '--file-associations', 'src/main/deploy/txn.properties', '--file-associations', 'src/main/deploy/asc.properties', '--license-file', 'LICENSE']
+        installerOptions = ['--file-associations', 'branding/goshawk/deploy/psbt.properties', '--file-associations', 'branding/goshawk/deploy/txn.properties', '--file-associations', 'branding/goshawk/deploy/asc.properties', '--license-file', 'LICENSE']
         if(os.windows) {
-            installerOptions.addAll(['--win-per-user-install', '--win-menu', '--win-menu-group', 'Sparrow', '--win-shortcut', '--resource-dir', 'src/main/deploy/package/windows/'])
-            imageOptions.addAll(['--icon', 'src/main/deploy/package/windows/sparrow.ico'])
+            installerOptions.addAll(['--win-per-user-install', '--win-menu', '--win-menu-group', 'Goshawk', '--win-shortcut', '--resource-dir', 'branding/goshawk/deploy/package/windows/'])
+            imageOptions.addAll(['--icon', 'branding/goshawk/deploy/package/windows/goshawk.ico'])
             installerType = "msi"
         }
         if(os.linux) {
             if(headless) {
-                installerName = "sparrowserver"
+                installerName = "goshawkserver"
                 installerOptions = ['--license-file', 'LICENSE']
             } else {
-                installerName = "sparrowwallet"
-                installerOptions.addAll(['--linux-shortcut', '--linux-menu-group', 'Sparrow'])
+                installerName = "goshawkwallet"
+                installerOptions.addAll(['--linux-shortcut', '--linux-menu-group', 'Goshawk'])
             }
-            installerOptions.addAll(['--resource-dir', layout.buildDirectory.dir('deploy/package').get().asFile.toString(), '--linux-app-category', 'utils', '--linux-app-release', '1', '--linux-rpm-license-type', 'ASL 2.0', '--linux-deb-maintainer', 'mail@sparrowwallet.com'])
-            imageOptions.addAll(['--icon', 'src/main/deploy/package/linux/Sparrow.png', '--resource-dir', 'src/main/deploy/package/linux/'])
+            installerOptions.addAll(['--resource-dir', layout.buildDirectory.dir('deploy/package').get().asFile.toString(), '--linux-app-category', 'utils', '--linux-app-release', '1', '--linux-rpm-license-type', 'ASL 2.0', '--linux-deb-maintainer', 'linzhm@users.noreply.github.com'])
+            imageOptions.addAll(['--icon', 'branding/goshawk/deploy/package/linux/Goshawk.png', '--resource-dir', 'branding/goshawk/deploy/package/linux/'])
         }
         if(os.macOsX) {
-            installerOptions.addAll(['--mac-sign', '--mac-signing-key-user-name', 'Craig Raw (UPLVMSK9D7)'])
-            imageOptions.addAll(['--icon', 'src/main/deploy/package/macos/sparrow.icns', '--resource-dir', 'src/main/deploy/package/macos/'])
+            imageOptions.addAll(['--icon', 'branding/goshawk/deploy/package/macos/goshawk.icns', '--resource-dir', 'branding/goshawk/deploy/package/macos/'])
             installerType = "dmg"
         }
     }
@@ -322,13 +323,13 @@ if(os.macOsX) {
     tasks.jpackage.dependsOn('patchLauncherUuid')
 }
 
-// Give the launcher a Sparrow LC_UUID, since the stock jpackage launcher shares its Mach-O UUID with every app packaged by the same JDK
+// Give the launcher a Goshawk LC_UUID, since the stock jpackage launcher shares its Mach-O UUID with every app packaged by the same JDK
 tasks.register('patchLauncherUuid') {
     dependsOn tasks.jpackageImage
-    def appDir = layout.buildDirectory.dir('jpackage/Sparrow.app').get().asFile
-    def launcherUuid = UUID.nameUUIDFromBytes("com.sparrowwallet.sparrow.${osArch}".getBytes('UTF-8'))
+    def appDir = layout.buildDirectory.dir('jpackage/Goshawk.app').get().asFile
+    def launcherUuid = UUID.nameUUIDFromBytes("org.goshawk.wallet.${osArch}".getBytes('UTF-8'))
     doLast {
-        def launcher = new File(appDir, 'Contents/MacOS/Sparrow')
+        def launcher = new File(appDir, 'Contents/MacOS/Goshawk')
         byte[] bytes = launcher.bytes
         def buffer = java.nio.ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN)
         if(Integer.toUnsignedLong(buffer.getInt(0)) != 0xfeedfacfL) {
@@ -388,14 +389,14 @@ tasks.register('copyUdevRules', Copy) {
 }
 
 tasks.register('prepareResourceDir', Copy) {
-    from("src/main/deploy/package/linux${headless ? '-headless' : ''}")
+    from("branding/goshawk/deploy/package/linux${headless ? '-headless' : ''}")
     into(layout.buildDirectory.dir('deploy/package'))
     include('*')
     eachFile { file ->
         if(file.name.equals('control') || file.name.endsWith('.spec')) {
             filter { line ->
                 if(line.contains('${size}')) {
-                    line = line.replace('${size}', getDirectorySize(layout.buildDirectory.dir('jpackage/Sparrow').get().asFile))
+                    line = line.replace('${size}', getDirectorySize(layout.buildDirectory.dir('jpackage/Goshawk').get().asFile))
                 }
                 return line.replace('${version}', "${version}").replace('${arch}', osArch == 'aarch64' ? 'arm64' : 'amd64')
             }
@@ -405,9 +406,9 @@ tasks.register('prepareResourceDir', Copy) {
 
 tasks.register('copyMimeInfo', Copy) {
     mustRunAfter tasks.jpackageImage
-    from('src/main/deploy/package/linux')
-    into(layout.buildDirectory.dir('jpackage/Sparrow/lib'))
-    include('sparrowwallet-Sparrow-MimeInfo.xml')
+    from('branding/goshawk/deploy/package/linux')
+    into(layout.buildDirectory.dir('jpackage/Goshawk/lib'))
+    include('goshawkwallet-Goshawk-MimeInfo.xml')
 }
 
 static def getDirectorySize(File directory) {
@@ -425,26 +426,26 @@ static def getDirectorySize(File directory) {
 }
 
 tasks.register('removeGroupWritePermission', Exec) {
-    commandLine 'chmod', '-R', 'g-w', "$buildDir/jpackage/Sparrow"
+    commandLine 'chmod', '-R', 'g-w', "$buildDir/jpackage/Goshawk"
 }
 
 tasks.register('packageZipDistribution', Zip) {
-    archiveFileName = "Sparrow-${version}.zip"
+    archiveFileName = "Goshawk-${version}.zip"
     destinationDirectory = file("$buildDir/jpackage")
     preserveFileTimestamps = os.macOsX
     from("$buildDir/jpackage/") {
-        include "Sparrow/**"
-        include "Sparrow.app/**"
+        include "Goshawk/**"
+        include "Goshawk.app/**"
     }
 }
 
 tasks.register('packageTarDistribution', Tar) {
     dependsOn removeGroupWritePermission
-    archiveFileName = "sparrow${headless ? 'server': 'wallet'}-${version}-${releaseArch}.tar.gz"
+    archiveFileName = "goshawk${headless ? 'server': 'wallet'}-${version}-${releaseArch}.tar.gz"
     destinationDirectory = file("$buildDir/jpackage")
     compression = Compression.GZIP
     from("$buildDir/jpackage/") {
-        include "Sparrow/**"
+        include "Goshawk/**"
     }
 }
 
@@ -631,3 +632,5 @@ extraJavaModuleInfo {
 kmpTorResourceFilterJar {
     keepTorCompilation("current","current")
 }
+// Product resources and legal packaging are kept outside the upstream source tree.
+apply from: "branding/goshawk/brand.gradle"

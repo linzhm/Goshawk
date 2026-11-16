@@ -1,0 +1,12 @@
+# Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
+[Desktop Entry]
+Name=Goshawk
+Comment=Goshawk
+Exec=/opt/goshawkwallet/bin/Goshawk %U
+Icon=/opt/goshawkwallet/lib/Goshawk.png
+Terminal=false
+Type=Application
+Categories=Finance;Network;
+MimeType=application/psbt;application/bitcoin-transaction;application/pgp-signature;x-scheme-handler/bitcoin;x-scheme-handler/auth47;x-scheme-handler/lightning
+StartupWMClass=Goshawk
+SingleMainWindow=true

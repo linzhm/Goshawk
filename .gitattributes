@@ -1,1 +1,5 @@
 src/test/resources/** -text
+
+# Preserve upstream attribution and font license byte-for-byte.
+docs/upstream/SPARROW-README.md -text -whitespace
+scripts/brand/OFL.txt -text -whitespace

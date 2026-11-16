@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Modified for Goshawk, 2026-11-16: independent identity and retained upstream attribution. -->
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.sparrowwallet.sparrow.control.DialogImage?>
+<StackPane prefHeight="530" prefWidth="640" stylesheets="@general.css, @about.css" fx:controller="com.sparrowwallet.sparrow.AboutController" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+    <VBox spacing="18">
+        <HBox styleClass="title-area" alignment="CENTER_LEFT" spacing="18">
+            <DialogImage fx:id="dialogImage" type="SPARROW"/>
+            <VBox spacing="4" alignment="CENTER_LEFT">
+                <Label fx:id="title" text="Goshawk" styleClass="title-label"/>
+                <Label text="A clear view of your money." styleClass="brand-subtitle"/>
+            </VBox>
+        </HBox>
+        <VBox spacing="14" styleClass="content-area">
+            <Label text="Goshawk is an independent desktop wallet project for BSV, built on Sparrow's wallet and transaction interface." wrapText="true"/>
+            <Label text="Development preview. This build retains Sparrow's Bitcoin backend. BSV transaction signing, payment delivery and SPV services are not connected yet." wrapText="true" styleClass="development-note"/>
+            <Label text="With thanks to Sparrow" styleClass="credit-title"/>
+            <Label text="Based on Sparrow Wallet by Craig Raw and its contributors, with Drongo, Lark and the wider open-source community. Goshawk is independently maintained and is not an official Sparrow release." wrapText="true"/>
+            <Label text="The original Apache License 2.0, copyright and attribution notices are retained. Third-party components keep their own license terms." wrapText="true"/>
+            <HBox spacing="18">
+                <Hyperlink text="Sparrow Wallet" onAction="#openUpstream"/>
+                <Hyperlink text="Support Sparrow" onAction="#openDonate"/>
+                <Hyperlink text="Licenses &amp; acknowledgements" onAction="#openLicenses"/>
+            </HBox>
+        </VBox>
+        <HBox styleClass="button-area" alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS"><Button text="Close" onAction="#close"/></HBox>
+    </VBox>
+</StackPane>

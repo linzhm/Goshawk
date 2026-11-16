@@ -1,3 +1,4 @@
+// Modified for Goshawk on 2026-11-16; see MODIFICATIONS.md. Original notices retained.
 package com.sparrowwallet.sparrow.settings;
 
 import com.sparrowwallet.drongo.wallet.Wallet;
@@ -183,7 +184,8 @@ public class GeneralSettingsController extends SettingsDetailController {
             config.setNotifyNewTransactions(newValue);
         });
 
-        checkNewVersions.setSelected(config.isCheckNewVersions());
+        checkNewVersions.setSelected(com.sparrowwallet.sparrow.branding.Branding.UPDATES_ENABLED && config.isCheckNewVersions());
+        checkNewVersions.setDisable(!com.sparrowwallet.sparrow.branding.Branding.UPDATES_ENABLED);
         checkNewVersions.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
             config.setCheckNewVersions(newValue);
             EventManager.get().post(new VersionCheckStatusEvent(newValue));
