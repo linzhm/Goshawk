@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.KeyPurpose;
@@ -532,7 +533,7 @@ public class EntryCell extends TreeTableCell<Entry, Entry> implements Confirmati
             }
 
             if(feeRate != null) {
-                tooltip += "\nFee rate: " + format.formatDecimalValue(feeRate, 2) + " sats/vB";
+                tooltip += "\nFee rate: " + format.formatDecimalValue(feeRate, 2) + " sats/B";
             }
 
             tooltip += "\nRBF: " + (canRBF(transactionEntry.getBlockTransaction(), transactionEntry.getWallet()) ? "Enabled" : "Disabled");

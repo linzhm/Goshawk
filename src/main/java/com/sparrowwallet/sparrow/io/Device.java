@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.sparrowwallet.drongo.protocol.ScriptType;
@@ -19,6 +20,8 @@ public class Device {
     private String[][] warnings;
     private String error;
     private List<ScriptType> supportedScriptTypes;
+
+    public void setSupportedScriptTypes(List<ScriptType> types) { supportedScriptTypes = List.copyOf(types); }
 
     public String getType() {
         return type;

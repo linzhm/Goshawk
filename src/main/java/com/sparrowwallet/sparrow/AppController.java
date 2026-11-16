@@ -377,7 +377,7 @@ public class AppController implements Initializable {
         Optional<Toggle> selectedUnitToggle = bitcoinUnit.getToggles().stream().filter(toggle -> selectedUnit.equals(toggle.getUserData())).findFirst();
         selectedUnitToggle.ifPresent(toggle -> bitcoinUnit.selectToggle(toggle));
         Optional<Toggle> otherUnitToggle = bitcoinUnit.getToggles().stream().filter(toggle ->
-                (List.of(BitcoinUnit.AUTO, BitcoinUnit.SATOSHIS).contains(selectedUnit) && BitcoinUnit.BTC.equals(toggle.getUserData()) || (selectedUnit == BitcoinUnit.BTC && BitcoinUnit.SATOSHIS.equals(toggle.getUserData())))).findFirst();
+                (List.of(BitcoinUnit.AUTO, BitcoinUnit.SATOSHIS).contains(selectedUnit) && BitcoinUnit.BSV.equals(toggle.getUserData()) || (selectedUnit == BitcoinUnit.BSV && BitcoinUnit.SATOSHIS.equals(toggle.getUserData())))).findFirst();
         otherUnitToggle.ifPresent(toggle -> ((RadioMenuItem)toggle).setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN)));
 
         UnitFormat format = Config.get().getUnitFormat();
@@ -423,7 +423,7 @@ public class AppController implements Initializable {
         MenuItem homeItem = new MenuItem("Home Folder...");
         homeItem.setOnAction(this::restartInHome);
         restart.getItems().add(homeItem);
-        List<Network> networks = new ArrayList<>(List.of(Network.MAINNET, Network.TESTNET, Network.TESTNET4, Network.SIGNET));
+        List<Network> networks = new ArrayList<>(List.of(Network.MAINNET));
         networks.remove(Network.get());
         for(Network network : networks) {
             MenuItem networkItem = new MenuItem(network.toDisplayString());
@@ -1154,7 +1154,7 @@ public class AppController implements Initializable {
             WalletNameDialog.NameAndBirthDate nameAndBirthDate = optNameAndBirthDate.get();
             File walletFile = Storage.getWalletFile(nameAndBirthDate.getName());
             Storage storage = new Storage(walletFile);
-            Wallet wallet = new Wallet(nameAndBirthDate.getName(), PolicyType.SINGLE_HD, ScriptType.P2WPKH, nameAndBirthDate.getBirthDate());
+            Wallet wallet = new Wallet(nameAndBirthDate.getName(), PolicyType.SINGLE_HD, ScriptType.P2PKH, nameAndBirthDate.getBirthDate());
             addWalletTabOrWindow(storage, wallet, false);
         }
     }
@@ -1751,6 +1751,7 @@ public class AppController implements Initializable {
     }
 
     public AppController addWalletTabOrWindow(Storage storage, Wallet wallet, boolean forceSameWindow) {
+        com.sparrowwallet.drongo.protocol.BsvTransaction.requireWallet(wallet);
         Window existingWalletWindow = AppServices.get().getWindowForWallet(storage.getWalletId(wallet));
         if(existingWalletWindow instanceof Stage) {
             Stage existingWalletStage = (Stage)existingWalletWindow;
@@ -2092,6 +2093,8 @@ public class AppController implements Initializable {
     }
 
     private void addTransactionTab(String name, File file, Transaction transaction, PSBT psbt, BlockTransaction blockTransaction, TransactionView initialView, Integer initialIndex) {
+        com.sparrowwallet.drongo.protocol.BsvTransaction.requireTransaction(transaction);
+        if(psbt != null) com.sparrowwallet.drongo.protocol.BsvTransaction.requireContainer(psbt);
         for(Tab tab : tabs.getTabs()) {
             TabData tabData = (TabData)tab.getUserData();
             if(tabData instanceof TransactionTabData transactionTabData) {
@@ -2309,9 +2312,9 @@ public class AppController implements Initializable {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
         BitcoinUnit unit = Config.get().getBitcoinUnit();
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = totalAmount >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS;
+            unit = totalAmount >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS;
         }
-        String amount = unit.equals(BitcoinUnit.BTC) ? format.formatBtcValue(totalAmount) + " BTC" : format.formatSatsValue(totalAmount) + " sats";
+        String amount = unit.equals(BitcoinUnit.BSV) ? format.formatBtcValue(totalAmount) + " BSV" : format.formatSatsValue(totalAmount) + " sats";
         String outputDesc = unknownScriptOutputs.size() == 1 ? "an output" : unknownScriptOutputs.size() + " outputs";
         Optional<ButtonType> result = AppServices.showWarningDialog("Unknown Script Type",
                 "This transaction contains " + outputDesc + " of a non-standard or unrecognised script type, totalling " + amount + ".\n\n" +
@@ -3375,7 +3378,7 @@ public class AppController implements Initializable {
         selectedToggle.ifPresent(toggle -> bitcoinUnit.selectToggle(toggle));
         bitcoinUnit.getToggles().forEach(toggle -> {
             RadioMenuItem menuItem = (RadioMenuItem)toggle;
-            if(List.of(BitcoinUnit.AUTO, BitcoinUnit.SATOSHIS).contains(event.getBitcoinUnit()) && BitcoinUnit.BTC.equals(toggle.getUserData()) || (event.getBitcoinUnit() == BitcoinUnit.BTC && BitcoinUnit.SATOSHIS.equals(toggle.getUserData()))) {
+            if(List.of(BitcoinUnit.AUTO, BitcoinUnit.SATOSHIS).contains(event.getBitcoinUnit()) && BitcoinUnit.BSV.equals(toggle.getUserData()) || (event.getBitcoinUnit() == BitcoinUnit.BSV && BitcoinUnit.SATOSHIS.equals(toggle.getUserData()))) {
                 menuItem.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN));
             } else {
                 menuItem.setAccelerator(null);

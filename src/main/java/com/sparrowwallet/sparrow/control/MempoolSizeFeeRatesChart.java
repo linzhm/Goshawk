@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.OsType;
@@ -345,7 +346,7 @@ public class MempoolSizeFeeRatesChart extends StackedAreaChart<String, Number> {
                         double mvb = kvb / 1000;
                         if(mvb >= 0.01 || (maxMvB < Y_VALUE_BREAK_MVB && mvb > 0.001)) {
                             String amount = (maxMvB < Y_VALUE_BREAK_MVB ? format.formatSatsValue((long)kvb) + " kvB" : format.formatDecimalValue(mvb, 2) + " MvB");
-                            Label label = new Label(series.getName() + " sats/vB: " + amount);
+                            Label label = new Label(series.getName() + " sats/B: " + amount);
                             Glyph circle = new Glyph(FontAwesome5.FONT_NAME, FontAwesome5.Glyph.CIRCLE);
                             circle.setStyle("-fx-text-fill: VSIZE" + series.getName() + "_COLOR; -fx-opacity: 0.7;");
                             label.setGraphic(circle);

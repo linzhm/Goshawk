@@ -68,16 +68,16 @@
                 </fx:define>
                 <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
                     <items>
-                        <Menu mnemonicParsing="false" text="Bitcoin Unit">
+                        <Menu mnemonicParsing="false" text="BitcoinSV Unit">
                             <items>
                                 <RadioMenuItem mnemonicParsing="false" text="Auto" toggleGroup="$bitcoinUnit" onAction="#setBitcoinUnit">
                                     <userData>
                                         <BitcoinUnit fx:constant="AUTO" />
                                     </userData>
                                 </RadioMenuItem>
-                                <RadioMenuItem mnemonicParsing="false" text="BTC" toggleGroup="$bitcoinUnit" onAction="#setBitcoinUnit">
+                                <RadioMenuItem mnemonicParsing="false" text="BSV" toggleGroup="$bitcoinUnit" onAction="#setBitcoinUnit">
                                     <userData>
-                                        <BitcoinUnit fx:constant="BTC" />
+                                        <BitcoinUnit fx:constant="BSV" />
                                     </userData>
                                 </RadioMenuItem>
                                 <RadioMenuItem mnemonicParsing="false" text="sats" toggleGroup="$bitcoinUnit" onAction="#setBitcoinUnit">
@@ -106,7 +106,7 @@
                                 </RadioMenuItem>
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Bitcoin Addresses">
+                        <Menu mnemonicParsing="false" text="BitcoinSV Addresses">
                             <items>
                                 <CheckMenuItem fx:id="chunkAddresses" mnemonicParsing="false" text="Chunk Addresses" onAction="#chunkAddresses"/>
                                 <CheckMenuItem fx:id="hideEmptyUsedAddresses" mnemonicParsing="false" text="Hide Empty Used Addresses" onAction="#hideEmptyUsedAddresses"/>
@@ -167,7 +167,7 @@
                     <MenuItem fx:id="sendToMany" mnemonicParsing="false" text="Send To Many" onAction="#sendToMany"/>
                     <MenuItem fx:id="sweepPrivateKey" mnemonicParsing="false" text="Sweep Private Key" onAction="#sweepPrivateKey"/>
                     <SeparatorMenuItem />
-                    <MenuItem fx:id="showPayNym" mnemonicParsing="false" text="Show PayNym" onAction="#showPayNym"/>
+                    <MenuItem fx:id="showPayNym" visible="false" mnemonicParsing="false" text="Show PayNym" onAction="#showPayNym"/>
                     <SeparatorMenuItem />
                     <Menu fx:id="switchServer" text="Switch Server"/>
                     <MenuItem mnemonicParsing="false" text="Verify Sparrow Download…" onAction="#verifyDownload" />

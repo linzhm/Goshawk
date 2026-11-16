@@ -2,6 +2,17 @@
 
 日期：2026-11-16。状态：源码调研与架构草案；尚未实现或验证 BSV 钱包功能。
 
+## 最新修订（2026-11-16）
+
+Goshawk 的运行路径限定为 BitcoinSV；此前保留 Bitcoin 后端作为可用过渡路径的选择撤销。
+软件、交易检查和 Ledger 入口均改用 ForkID；产品单位改为 BSV，移除 P2SH / SegWit / Taproot 入口。
+旧 Bitcoin 联网路径已关闭，WOC 和自建 SPV 服务尚未接通，不能宣称在线收付款可用。
+
+仅修改 Goshawk 及自有服务，不能修改 ElectrumSVP、BSV Desktop 或要求它们采用新协议。
+为两个参考钱包新增 HD 发票入口的建议已撤销。兼容其现有支付方式，同时保留 Ledger 托管边界；
+原生身份派生收款的资金密钥不等同于 Ledger 的 HD 密钥，不能隐藏这一区别。
+当前证据、兼容矩阵和未实现项见 [payment-compatibility.md](payment-compatibility.md)。
+
 ## 1. 本次已确定的方向
 
 这些事项来自用户在本次讨论中的明确选择：
@@ -23,7 +34,7 @@ Rust 已退出本次实现路线。此前只是候选调研，没有形成 Rust 
 
 ## 2. 源码基线与证据
 
-工作目录已取得 Sparrow 源码及其 drongo、lark 子模块。这里只建立本地开发分支，没有创建远端 fork、推送或发布。
+初次调研取得了 Sparrow 源码及 drongo、lark 子模块。后续已建立公开 Goshawk fork；Java/Lark 的 BSV 硬件适配进展见 `hardware-bsv.md`。下表保留调研时的上游基线。
 
 | 项目 | 本次读取的提交 |
 | --- | --- |

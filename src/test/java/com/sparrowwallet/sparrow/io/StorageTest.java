@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.sparrowwallet.drongo.ExtendedKey;
@@ -51,7 +52,7 @@ public class StorageTest extends IoTest {
         System.setProperty(Wallet.ALLOW_DERIVATIONS_MATCHING_OTHER_NETWORKS_PROPERTY, "true");
         Storage storage = new Storage(getFile("sparrow-single-wallet"));
         Wallet wallet = storage.loadEncryptedWallet("pass").getWallet();
-        Assertions.assertTrue(wallet.isValid());
+        Assertions.assertFalse(wallet.isValid(), "Historical witness wallet must not become an active BitcoinSV wallet");
     }
 
     @Test
@@ -74,7 +75,7 @@ public class StorageTest extends IoTest {
             }
         }
 
-        Assertions.assertTrue(wallet.isValid());
+        Assertions.assertFalse(wallet.isValid(), "Historical witness wallet must not become an active BitcoinSV wallet");
 
         Assertions.assertTrue(wallet.getName().startsWith("sparrow-single-seed-wallet"));
         Assertions.assertEquals(PolicyType.SINGLE_HD, wallet.getPolicyType());
@@ -101,7 +102,7 @@ public class StorageTest extends IoTest {
         System.setProperty(Wallet.ALLOW_DERIVATIONS_MATCHING_OTHER_NETWORKS_PROPERTY, "true");
         Storage storage = new Storage(getFile("sparrow-single-wallet"));
         Wallet wallet = storage.loadEncryptedWallet("pass").getWallet();
-        Assertions.assertTrue(wallet.isValid());
+        Assertions.assertFalse(wallet.isValid(), "Historical witness wallet must not become an active BitcoinSV wallet");
 
         File tempWallet = File.createTempFile("sparrow", "tmp");
         tempWallet.deleteOnExit();
@@ -113,7 +114,7 @@ public class StorageTest extends IoTest {
 
         Storage temp2Storage = new Storage(tempWallet);
         wallet = temp2Storage.loadEncryptedWallet("pass").getWallet();
-        Assertions.assertTrue(wallet.isValid());
+        Assertions.assertFalse(wallet.isValid(), "Historical witness wallet must not become an active BitcoinSV wallet");
     }
 
     @Test

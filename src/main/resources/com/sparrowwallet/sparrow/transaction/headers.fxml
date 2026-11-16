@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Modified for Goshawk BitcoinSV, 2026-11-16. -->
+
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
@@ -158,7 +160,7 @@
                         <Field text="Bytes:">
                             <CopyableLabel fx:id="size" />
                         </Field>
-                        <Field text="vBytes:">
+                        <Field text="Serialized bytes:" visible="false" managed="false">
                             <CopyableLabel fx:id="virtualSize" />
                         </Field>
                     </Fieldset>

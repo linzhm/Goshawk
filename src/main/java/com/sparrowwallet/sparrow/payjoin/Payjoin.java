@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.payjoin;
 
 import com.google.common.collect.ImmutableMap;
@@ -313,8 +314,8 @@ public class Payjoin {
         double proposalFeeRate = getProposalFeeRate(original, proposal);
         if(proposalFeeRate < minFeeRate) {
             UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-            throw new PayjoinReceiverException("The fee rate of the payjoin transaction of " + format.formatDecimalValue(proposalFeeRate, 2) + " sats/vB is less than the requested minimum of "
-                    + format.formatDecimalValue(minFeeRate, 2) + " sats/vB");
+            throw new PayjoinReceiverException("The fee rate of the payjoin transaction of " + format.formatDecimalValue(proposalFeeRate, 2) + " sats/B is less than the requested minimum of "
+                    + format.formatDecimalValue(minFeeRate, 2) + " sats/B");
         }
 
         //Add global pubkey map for signing

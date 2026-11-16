@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.net;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -114,7 +115,7 @@ public enum ExchangeSource {
                         log.warn("Error retrieving historical currency rates", e);
                     } else {
                         if(e instanceof HttpResponseException httpException && httpException.getStatusCode() == 404) {
-                            log.warn("Error retrieving historical currency rates (" + e.getMessage() + "). BTC-" + currency.getCurrencyCode() + " may not be supported by " + this);
+                            log.warn("Error retrieving historical currency rates (" + e.getMessage() + "). BSV-" + currency.getCurrencyCode() + " may not be supported by " + this);
                         } else {
                             log.warn("Error retrieving historical currency rates (" + e.getMessage() + ")");
                         }

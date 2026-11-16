@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Modified for Goshawk BitcoinSV, 2026-11-16. -->
+
 
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -16,7 +18,7 @@
                     <ToggleGroup fx:id="walletMenu" />
                 </toggleGroup>
                 <graphic>
-                    <Glyph fontFamily="FontAwesome" icon="BTC" fontSize="20" />
+                    <Label text="BSV" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
                 </graphic>
                 <userData>
                     <Function fx:constant="TRANSACTIONS"/>

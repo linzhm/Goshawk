@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.google.common.base.Throwables;
@@ -564,7 +565,7 @@ public class PrivateKeySweepDialog extends Dialog<Transaction> {
 
     private void updateFeeRate() {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        feeRate.setText(format.getCurrencyFormat().format(feeRange.getFeeRate()) + " sats/vB");
+        feeRate.setText(format.getCurrencyFormat().format(feeRange.getFeeRate()) + " sats/B");
     }
 
     @Subscribe

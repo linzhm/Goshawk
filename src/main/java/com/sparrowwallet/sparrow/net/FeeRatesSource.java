@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.net;
 
 import com.sparrowwallet.drongo.Network;
@@ -148,7 +149,7 @@ public enum FeeRatesSource {
             return network == Network.MAINNET;
         }
     },
-    MINIMUM("Minimum (1 sat/vB)", false) {
+    MINIMUM("Minimum (1 sat/B)", false) {
         @Override
         public Map<Integer, Double> getBlockTargetFeeRates(Map<Integer, Double> defaultblockTargetFeeRates) {
             Map<Integer, Double> blockTargetFeeRates = new LinkedHashMap<>();

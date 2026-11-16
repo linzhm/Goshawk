@@ -1,3 +1,4 @@
+// Modified for Goshawk BSV integration, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.sparrowwallet.drongo.ExtendedKey;
@@ -11,6 +12,7 @@ import com.sparrowwallet.drongo.wallet.StandardAccount;
 import com.sparrowwallet.drongo.wallet.WalletModel;
 import com.sparrowwallet.lark.DeviceException;
 import com.sparrowwallet.lark.Lark;
+import com.sparrowwallet.lark.bsv.*;
 import com.sparrowwallet.lark.bitbox02.BitBoxFileNoiseConfig;
 import com.sparrowwallet.lark.trezor.TrezorFileNoiseConfig;
 import com.sparrowwallet.sparrow.AppServices;
@@ -64,104 +66,34 @@ public class Hwi {
     }
 
     public List<Device> enumerate(String passphrase) throws ImportException {
-        List<Device> devices = new ArrayList<>();
-        devices.addAll(enumerateUsb(passphrase));
-        devices.addAll(enumerateCard());
-        return devices;
-    }
-
-    private List<Device> enumerateUsb(String passphrase) throws ImportException {
         deviceLock.lock();
         try {
-            Lark lark = getLark(passphrase);
-            return lark.enumerate().stream().map(Device::fromHardwareClient).toList();
-        } catch(Throwable e) {
-            log.error("Error enumerating USB devices", e);
-            throw new ImportException(e.getMessage() == null || e.getMessage().isEmpty() ? "Error scanning, check devices are ready" : e.getMessage(), e);
-        } finally {
-            isPromptActive = false;
-            deviceLock.unlock();
-        }
-    }
-
-    private List<Device> enumerateCard() {
-        List<Device> devices = new ArrayList<>();
-        if(CardApi.isReaderAvailable()) {
-            try {
-                List<WalletModel> connectedCards = CardApi.getConnectedCards();
-                for(WalletModel card : connectedCards) {
-                    CardApi cardApi = CardApi.getCardApi(card, null);
-                    WalletModel walletModel = cardApi.getCardType();
-
-                    Device cardDevice = new Device();
-                    cardDevice.setType(walletModel.getType());
-                    cardDevice.setModel(walletModel);
-                    cardDevice.setNeedsPassphraseSent(Boolean.FALSE);
-                    cardDevice.setNeedsPinSent(Boolean.FALSE);
-                    cardDevice.setCard(true);
-                    devices.add(cardDevice);
-                }
-            } catch(CardNotPresentException e) {
-                //ignore
-            } catch(CardException e) {
-                log.info("Error reading card", e);
-            } catch(Exception e) {
-                //a card is free to return any bytes it likes, so a malformed response can surface as any runtime exception
-                log.error("Error reading card", e);
+            List<Device> devices = new ArrayList<>();
+            for(BsvDeviceInfo info : getLark().enumerateBsvLedgers()) {
+                WalletModel model = WalletModel.valueOf(info.model());
+                if(model != WalletModel.LEDGER_NANO_S && model != WalletModel.LEDGER_NANO_S_PLUS && model != WalletModel.LEDGER_NANO_X) continue;
+                Device device = new Device();
+                device.setType("ledger"); device.setModel(model); device.setPath(info.path());
+                device.setNeedsPinSent(false); device.setNeedsPassphraseSent(false);
+                device.setSupportedScriptTypes(List.of(ScriptType.P2PKH));
+                if(!info.state().equals("ready") && !info.state().equals("wrong_app")) device.setError(info.detail());
+                devices.add(device);
             }
-        }
-
-        return devices;
+            return devices;
+        } catch(DeviceException e) { throw new ImportException(e.getMessage(), e); }
+        finally { deviceLock.unlock(); }
     }
 
     public boolean promptPin(Device device) throws ImportException {
-        deviceLock.lock();
-        try {
-            Lark lark = getLark();
-            boolean result = lark.promptPin(device.getType(), device.getPath());
-            isPromptActive = true;
-            return result;
-        } catch(DeviceException e) {
-            throw new ImportException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error prompting pin", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+        throw new ImportException("Unlock the Ledger on the device, then rescan");
     }
 
     public boolean sendPin(Device device, String pin) throws ImportException {
-        deviceLock.lock();
-        try {
-            Lark lark = getLark();
-            return lark.sendPin(device.getType(), device.getPath(), pin);
-        } catch(DeviceException e) {
-            throw new ImportException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error sending pin", e);
-            throw e;
-        } finally {
-            isPromptActive = false;
-            deviceLock.unlock();
-        }
+        throw new ImportException("Enter the PIN on the Ledger itself");
     }
 
     public boolean togglePassphrase(Device device) throws ImportException {
-        deviceLock.lock();
-        try {
-            Lark lark = getLark();
-            boolean result = lark.togglePassphrase(device.getType(), device.getPath());
-            isPromptActive = false;
-            return result;
-        } catch(DeviceException e) {
-            throw new ImportException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error toggling passphrase", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+        throw new ImportException("Select the passphrase wallet on the Ledger itself");
     }
 
     public Map<WalletType, ExtendedKey> getXpubs(Device device, String passphrase, Map<WalletType, String> accountDerivationPaths, Map<WalletType, ExtendedKey> accountXpubs) throws ImportException {
@@ -180,92 +112,103 @@ public class Hwi {
     public ExtendedKey getXpub(Device device, String passphrase, String derivationPath) throws ImportException {
         deviceLock.lock();
         try {
-            Lark lark = getLark(passphrase);
-            ExtendedKey xpub = lark.getPubKeyAtPath(device.getType(), device.getPath(), derivationPath);
-            isPromptActive = false;
-            return xpub;
-        } catch(DeviceException e) {
-            throw new ImportException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error retrieving xpub", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+            prepareBsvDevice(device, passphrase);
+            BsvAccount account = getLark().getBsvAccount(device.getPath(), derivationPath);
+            // Never substitute an account fingerprint for a root fingerprint.
+            device.setFingerprint(getLark().getBsvMasterFingerprint(device.getPath(), account));
+            return ExtendedKey.fromDescriptor(account.xpub(), true);
+        } catch(DeviceException | IllegalArgumentException e) { throw new ImportException(e.getMessage(), e); }
+        finally { deviceLock.unlock(); }
     }
 
     public SilentPaymentScanAddress getSpscan(Device device, String passphrase, String derivationPath) throws ImportException {
-        deviceLock.lock();
-        try {
-            Lark lark = getLark(passphrase);
-            SilentPaymentScanAddress spscan = lark.getSpscanAtPath(device.getType(), device.getPath(), derivationPath);
-            isPromptActive = false;
-            return spscan;
-        } catch(DeviceException e) {
-            throw new ImportException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error retrieving spscan", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+        throw new ImportException("Silent payments are not supported by BitcoinSV");
     }
 
     public String displayAddress(Device device, String passphrase, ScriptType scriptType, OutputDescriptor addressDescriptor,
                                  OutputDescriptor walletDescriptor, String walletName, byte[] walletRegistration) throws DisplayAddressException {
-        if(!Arrays.asList(ScriptType.ADDRESSABLE_TYPES).contains(scriptType)) {
-            throw new IllegalArgumentException("Cannot display address for script type " + scriptType + ": Only addressable types supported");
-        }
-
         deviceLock.lock();
         try {
-            Lark lark = getLark(passphrase, walletDescriptor, walletName, walletRegistration);
-            String address = lark.displayAddress(device.getType(), device.getPath(), addressDescriptor);
-            newDeviceRegistrations.addAll(lark.getWalletRegistrations().values());
-            newDeviceRegistrations.remove(walletRegistration);
-            return address;
-        } catch(DeviceException e) {
-            throw new DisplayAddressException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error displaying address", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+            BsvAccount account = BsvWalletSigning.account(walletDescriptor);
+            String path = BsvWalletSigning.addressPath(account, addressDescriptor);
+            prepareBsvDevice(device, passphrase);
+            return getLark().displayBsvAddress(device.getPath(), account, path);
+        } catch(DeviceException | IllegalArgumentException e) { throw new DisplayAddressException(e.getMessage(), e); }
+        finally { deviceLock.unlock(); }
     }
 
-    public String signMessage(Device device, String passphrase, String message, String derivationPath) throws SignMessageException {
+    public String signMessage(Device device, String passphrase, String message, String derivationPath, OutputDescriptor descriptor) throws SignMessageException {
         deviceLock.lock();
         try {
-            Lark lark = getLark(passphrase);
-            return lark.signMessage(device.getType(), device.getPath(), message, derivationPath);
-        } catch(DeviceException e) {
-            throw new SignMessageException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error signing message", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+            BsvAccount account = BsvWalletSigning.account(descriptor);
+            prepareBsvDevice(device, passphrase);
+            return getLark().signBsvMessage(device.getPath(), account, derivationPath, message);
+        } catch(DeviceException | IllegalArgumentException e) { throw new SignMessageException(e.getMessage(), e); }
+        finally { deviceLock.unlock(); }
     }
 
     public PSBT signPSBT(Device device, String passphrase, PSBT psbt,
                          OutputDescriptor walletDescriptor, String walletName, byte[] walletRegistration) throws SignTransactionException {
         deviceLock.lock();
         try {
-            Lark lark = getLark(passphrase, walletDescriptor, walletName, walletRegistration);
-            PSBT signed = lark.signTransaction(device.getType(), device.getPath(), psbt);
-            newDeviceRegistrations.addAll(lark.getWalletRegistrations().values());
-            newDeviceRegistrations.remove(walletRegistration);
-            return signed;
-        } catch(DeviceException e) {
-            throw new SignTransactionException(e.getMessage(), e);
-        } catch(RuntimeException e) {
-            log.error("Error signing PSBT", e);
-            throw e;
-        } finally {
-            deviceLock.unlock();
-        }
+            BsvAccount account = BsvWalletSigning.account(walletDescriptor);
+            BsvSigningRequest request = BsvWalletSigning.prepare(psbt, account);
+            prepareBsvDevice(device, passphrase);
+            var result = getLark().signBsvTransaction(device.getPath(), account, request, BsvSigningRequest.VerificationPolicy.REQUIRE_TRUSTED);
+            return BsvWalletSigning.apply(psbt, request, result);
+        } catch(Exception e) { throw new SignTransactionException(e.getMessage(), e); }
+        finally { deviceLock.unlock(); }
+    }
+
+    private void prepareBsvDevice(Device device, String passphrase) throws DeviceException {
+        if(!"ledger".equals(device.getType())) throw new DeviceException("No BitcoinSV signing route is implemented for this device");
+        if(passphrase != null && !passphrase.isEmpty()) throw new DeviceException("Select the passphrase wallet on the Ledger itself");
+        var selected = getLark().enumerateBsvLedgers().stream().filter(info -> info.path().equals(device.getPath())).findFirst()
+                .orElseThrow(() -> new DeviceException("The selected Ledger disconnected; rescan and select it again"));
+        device.setPath(getLark().openBsvLedgerApp(selected).path());
+    }
+
+    public List<BsvDeviceInfo> enumerateBsvLedgers() throws DeviceException {
+        deviceLock.lock();
+        try { return getLark().enumerateBsvLedgers(); }
+        finally { deviceLock.unlock(); }
+    }
+
+    public BsvDeviceInfo openBsvLedgerApp(BsvDeviceInfo selected) throws DeviceException {
+        deviceLock.lock();
+        try { return getLark().openBsvLedgerApp(selected); }
+        finally { deviceLock.unlock(); }
+    }
+
+    public BsvAccount getBsvAccount(String devicePath, String accountPath) throws DeviceException {
+        deviceLock.lock();
+        try { return getLark().getBsvAccount(devicePath, accountPath); }
+        finally { deviceLock.unlock(); }
+    }
+
+    public String displayBsvAddress(String devicePath, BsvAccount account, String path) throws DeviceException {
+        deviceLock.lock();
+        try { return getLark().displayBsvAddress(devicePath, account, path); }
+        finally { deviceLock.unlock(); }
+    }
+
+    public String signBsvMessage(String devicePath, BsvAccount account, String path, String message) throws DeviceException {
+        deviceLock.lock();
+        try { return getLark().signBsvMessage(devicePath, account, path, message); }
+        finally { deviceLock.unlock(); }
+    }
+
+    public BsvSigningRequest.VerificationPlan planBsvSigning(String devicePath, BsvSigningRequest request) throws DeviceException {
+        deviceLock.lock();
+        try { return getLark().planBsvSigning(devicePath, request); }
+        finally { deviceLock.unlock(); }
+    }
+
+    public BsvSigningRequest signBsvTransaction(String devicePath, BsvAccount account, BsvSigningRequest request,
+                                              BsvSigningRequest.VerificationPolicy policy) throws DeviceException {
+        deviceLock.lock();
+        try { return request.apply(getLark().signBsvTransaction(devicePath, account, request, policy)); }
+        finally { deviceLock.unlock(); }
     }
 
     private Lark getLark() {
@@ -447,12 +390,14 @@ public class Hwi {
 
     public static class SignMessageService extends Service<String> {
         private final Device device;
+        private final OutputDescriptor descriptor;
         private final String passphrase;
         private final String message;
         private final String derivationPath;
 
-        public SignMessageService(Device device, String passphrase, String message, String derivationPath) {
+        public SignMessageService(Device device, String passphrase, String message, String derivationPath, OutputDescriptor descriptor) {
             this.device = device;
+            this.descriptor = descriptor;
             this.passphrase = passphrase;
             this.message = message;
             this.derivationPath = derivationPath;
@@ -463,7 +408,7 @@ public class Hwi {
             return new Task<>() {
                 protected String call() throws SignMessageException {
                     Hwi hwi = new Hwi();
-                    return hwi.signMessage(device, passphrase, message, derivationPath);
+                    return hwi.signMessage(device, passphrase, message, derivationPath, descriptor);
                 }
             };
         }

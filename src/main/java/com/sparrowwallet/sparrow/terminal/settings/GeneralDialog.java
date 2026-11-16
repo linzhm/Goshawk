@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.terminal.settings;
 
 import com.googlecode.lanterna.TerminalSize;
@@ -50,7 +51,7 @@ public class GeneralDialog extends DialogWindow {
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(5));
 
-        mainPanel.addComponent(new Label("Bitcoin Unit"));
+        mainPanel.addComponent(new Label("BitcoinSV Unit"));
         bitcoinUnit = new ComboBox<>(BitcoinUnit.values());
         mainPanel.addComponent(bitcoinUnit);
 
@@ -66,7 +67,7 @@ public class GeneralDialog extends DialogWindow {
         mainPanel.addComponent(fiatCurrency);
 
         mainPanel.addComponent(new Label("Exchange rate source"));
-        exchangeSource = new ComboBox<>(ExchangeSource.values());
+        exchangeSource = new ComboBox<>(ExchangeSource.NONE);
         mainPanel.addComponent(exchangeSource);
 
         bitcoinUnit.setSelectedItem(Config.get().getBitcoinUnit() == null ? BitcoinUnit.AUTO : Config.get().getBitcoinUnit());

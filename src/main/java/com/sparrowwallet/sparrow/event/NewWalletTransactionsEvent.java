@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.event;
 
 import com.sparrowwallet.drongo.BitcoinUnit;
@@ -60,11 +61,11 @@ public class NewWalletTransactionsEvent {
 
         BitcoinUnit unit = Config.get().getBitcoinUnit();
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
         }
 
-        if(unit == BitcoinUnit.BTC) {
-            return format.formatBtcValue(value) + " BTC";
+        if(unit == BitcoinUnit.BSV) {
+            return format.formatBtcValue(value) + " BSV";
         }
 
         return format.formatSatsValue(value) + " sats";

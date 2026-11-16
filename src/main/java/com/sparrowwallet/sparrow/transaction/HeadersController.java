@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.transaction;
 
 import com.sparrowwallet.drongo.KeyPurpose;
@@ -554,9 +555,9 @@ public class HeadersController extends TransactionFormController implements Init
             noWalletsWarningLink.visibleProperty().bind(noWalletsWarning.visibleProperty());
 
             boolean taprootInput = psbt.getPsbtInputs().stream().anyMatch(PSBTInput::isTaproot);
-            SigHash requiredSigHash = taprootInput ? SigHash.DEFAULT : SigHash.ALL;
+            SigHash requiredSigHash = SigHash.ALL_FORKID;
             SigHash psbtSigHash = silentPaymentOutput ? requiredSigHash : psbt.getPsbtInputs().stream().map(PSBTInput::getSigHash).filter(Objects::nonNull).findFirst().orElse(requiredSigHash);
-            sigHash.setItems(FXCollections.observableList(silentPaymentOutput ? List.of(requiredSigHash) : (taprootInput ? SigHash.TAPROOT_SIGNING_TYPES : SigHash.LEGACY_SIGNING_TYPES)));
+            sigHash.setItems(FXCollections.observableList(SigHash.LEGACY_SIGNING_TYPES));
             sigHash.setValue(psbtSigHash);
             sigHash.setConverter(new StringConverter<>() {
                 @Override
@@ -565,7 +566,7 @@ public class HeadersController extends TransactionFormController implements Init
                         return "";
                     }
 
-                    boolean recommended = (taprootInput && sigHash == SigHash.DEFAULT) || (!taprootInput && sigHash == SigHash.ALL);
+                    boolean recommended = sigHash == SigHash.ALL_FORKID;
                     return sigHash.getName() + (recommended ? (silentPaymentOutput ? " (Required)" : " (Recommended)") : "");
                 }
 
@@ -575,7 +576,7 @@ public class HeadersController extends TransactionFormController implements Init
                 }
             });
             sigHash.valueProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue == SigHash.NONE || newValue == SigHash.ANYONECANPAY_NONE) {
+                if(newValue == SigHash.NONE_FORKID || newValue == SigHash.ANYONECANPAY_NONE_FORKID) {
                     Optional<ButtonType> optType = AppServices.showWarningDialog("Confirm Sighash None",
                             "A sighash value of none means the signature does not commit to any of the outputs, and can be reused on a transaction with different outputs.\n\nAre you sure?",
                             ButtonType.NO, ButtonType.YES);
@@ -586,7 +587,7 @@ public class HeadersController extends TransactionFormController implements Init
                 }
 
                 for(PSBTInput psbtInput : psbt.getPsbtInputs()) {
-                    psbtInput.setSigHash(newValue == SigHash.DEFAULT && !psbtInput.isTaproot() ? SigHash.ALL : newValue);
+                    psbtInput.setSigHash(newValue);
                 }
             });
 
@@ -620,17 +621,13 @@ public class HeadersController extends TransactionFormController implements Init
     }
 
     private void updateType() {
-        String type = "Legacy";
-        if(headersForm.getTransaction().isSegwit() || (headersForm.getPsbt() != null && headersForm.getPsbt().getPsbtInputs().stream().anyMatch(in -> in.getWitnessUtxo() != null))) {
-            type = "Segwit";
-        }
-        segwit.setText(type);
+        segwit.setText("BitcoinSV");
     }
 
     private void updateSize() {
         size.setText(headersForm.getTransaction().getSize() + " B");
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        virtualSize.setText(format.formatDecimalValue(getVirtualSize(), 2) + " vB");
+        virtualSize.setText(format.formatDecimalValue(getVirtualSize(), 2) + " B");
     }
 
     /**
@@ -694,7 +691,7 @@ public class HeadersController extends TransactionFormController implements Init
         fee.setValue(feeAmt);
         double feeRateAmt = feeAmt.doubleValue() / getVirtualSize();
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        feeRate.setText(format.formatDecimalValue(feeRateAmt, 2) + " sats/vB" + (headersForm.isTransactionFinalized() ? "" : " (non-final)"));
+        feeRate.setText(format.formatDecimalValue(feeRateAmt, 2) + " sats/B" + (headersForm.isTransactionFinalized() ? "" : " (non-final)"));
     }
 
     private WalletTransaction getWalletTransaction(Map<Sha256Hash, BlockTransaction> inputTransactions) {
@@ -1427,7 +1424,7 @@ public class HeadersController extends TransactionFormController implements Init
             if(feeRateAmt > AppServices.getLongFeeRatesRange().getLast() || (AppServices.getTargetBlockFeeRates() != null && feeRateAmt > AppServices.getDefaultFeeRate() * FEE_MULTIPLE_LIMIT)) {
                 UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
                 Optional<ButtonType> optType = AppServices.showWarningDialog("Very high fee rate!",
-                        "This transaction pays a very high fee rate of " + format.formatDecimalValue(feeRateAmt, 0) + " sats/vB.\n\nBroadcast this transaction?", ButtonType.YES, ButtonType.NO);
+                        "This transaction pays a very high fee rate of " + format.formatDecimalValue(feeRateAmt, 0) + " sats/B.\n\nBroadcast this transaction?", ButtonType.YES, ButtonType.NO);
                 if(optType.isPresent() && optType.get() == ButtonType.NO) {
                     broadcastButton.setDisable(false);
                     broadcastButton.requestFocus();
@@ -1519,10 +1516,10 @@ public class HeadersController extends TransactionFormController implements Init
             if(failMessage.startsWith("min relay fee not met")) {
                 if(AppServices.getServerMinimumRelayFeeRate() != null && !AppServices.getServerMinimumRelayFeeRate().equals(AppServices.getMinimumRelayFeeRate())) {
                     AppServices.showErrorDialog("Error broadcasting transaction", "The fee rate for the signed transaction is below the minimum configured relay fee rate for the server of " +
-                            format.getCurrencyFormat().format(AppServices.getServerMinimumRelayFeeRate()) + " sats/vB.");
+                            format.getCurrencyFormat().format(AppServices.getServerMinimumRelayFeeRate()) + " sats/B.");
                 } else {
                     Double minRelayFeeRate = AppServices.getServerMinimumRelayFeeRate() != null ? AppServices.getServerMinimumRelayFeeRate() : AppServices.getMinimumRelayFeeRate();
-                    AppServices.showErrorDialog("Error broadcasting transaction", "The fee rate for the signed transaction is below the minimum " + format.getCurrencyFormat().format(minRelayFeeRate) + " sats/vB. " +
+                    AppServices.showErrorDialog("Error broadcasting transaction", "The fee rate for the signed transaction is below the minimum " + format.getCurrencyFormat().format(minRelayFeeRate) + " sats/B. " +
                             "This usually happens because a keystore has created a signature that is larger than necessary.\n\n" +
                             "You can solve this by recreating the transaction with a slightly increased fee rate.");
                 }
@@ -1552,7 +1549,7 @@ public class HeadersController extends TransactionFormController implements Init
                     AppServices.showErrorDialog("Error broadcasting transaction", "The fee for the replacement transaction was insufficient. Increase the fee to at least " + requiredFee + " sats to try again.");
                 } else if(feeRateMatcher.matches()) {
                     double requiredFeeRate = Double.parseDouble(feeRateMatcher.group(2)) * Transaction.SATOSHIS_PER_BITCOIN / 1000;
-                    AppServices.showErrorDialog("Error broadcasting transaction", "The fee rate for the replacement transaction was insufficient. Increase the fee rate to at least " + format.getCurrencyFormat().format(requiredFeeRate) + " sats/vB to try again.");
+                    AppServices.showErrorDialog("Error broadcasting transaction", "The fee rate for the replacement transaction was insufficient. Increase the fee rate to at least " + format.getCurrencyFormat().format(requiredFeeRate) + " sats/B to try again.");
                 } else {
                     AppServices.showErrorDialog("Error broadcasting transaction", "The fee for the replacement transaction was insufficient. Increase the fee to try again.");
                 }

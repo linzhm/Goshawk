@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.google.common.base.Throwables;
@@ -947,7 +948,7 @@ public class DevicePane extends TitledDescriptionPane {
 
     private byte[] getDeviceRegistration() {
         Optional<Keystore> optKeystore = wallet.getKeystores().stream()
-                .filter(keystore -> keystore.getKeyDerivation().getMasterFingerprint().equals(device.getFingerprint()) && keystore.getDeviceRegistration() != null).findFirst();
+                .filter(keystore -> java.util.Objects.equals(keystore.getKeyDerivation().getMasterFingerprint(), device.getFingerprint()) && keystore.getDeviceRegistration() != null).findFirst();
         return optKeystore.map(Keystore::getDeviceRegistration).orElse(null);
     }
 
@@ -980,7 +981,7 @@ public class DevicePane extends TitledDescriptionPane {
                 signButton.setDisable(false);
             }
         } else {
-            Hwi.SignMessageService signMessageService = new Hwi.SignMessageService(device, passphrase.get(), message, requiredDerivation.getDerivationPath());
+            Hwi.SignMessageService signMessageService = new Hwi.SignMessageService(device, passphrase.get(), message, requiredDerivation.getDerivationPath(), OutputDescriptor.getOutputDescriptor(wallet));
             signMessageService.setOnSucceeded(successEvent -> {
                 String signature = signMessageService.getValue();
                 EventManager.get().post(new MessageSignedEvent(wallet, signature));

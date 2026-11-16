@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.sparrowwallet.drongo.ExtendedKey;
@@ -31,8 +32,7 @@ import java.util.stream.Stream;
 
 public class SparrowTest {
     private static final String TEST_MNEMONIC = "response seminar brave tip suit recall often sound stick owner lottery motion";
-    private static final String TEST_XPUB = "xpub6BrhGFTWPd3DXo8s2BPxHHzCmBCyj8QvamcEUaq8EDwnwXpvvcU9LzpJqENHcqHkqwTn2vPhynGVoEqj3PAB3NxnYZrvCsSfoCniJKaggdy";
-    private static final String DERIVATION = "m/84'/0'/0'";
+    private static final String DERIVATION = "m/44'/0'/0'";
 
     private Path tempDir;
 
@@ -53,29 +53,30 @@ public class SparrowTest {
     private Wallet createSeedWallet() throws Exception {
         Wallet wallet = new Wallet("Seed Wallet");
         wallet.setPolicyType(PolicyType.SINGLE_HD);
-        wallet.setScriptType(ScriptType.P2WPKH);
+        wallet.setScriptType(ScriptType.P2PKH);
 
         DeterministicSeed seed = new DeterministicSeed(TEST_MNEMONIC, "", 0, DeterministicSeed.Type.BIP39);
         Keystore keystore = Keystore.fromSeed(seed, PolicyType.SINGLE_HD, KeyDerivation.parsePath(DERIVATION));
         keystore.setLabel("Keystore 1");
         wallet.getKeystores().add(keystore);
-        wallet.setDefaultPolicy(Policy.getPolicy(PolicyType.SINGLE_HD, ScriptType.P2WPKH, wallet.getKeystores(), null));
+        wallet.setDefaultPolicy(Policy.getPolicy(PolicyType.SINGLE_HD, ScriptType.P2PKH, wallet.getKeystores(), null));
 
         return wallet;
     }
 
-    private Wallet createWatchOnlyWallet() {
+    private Wallet createWatchOnlyWallet() throws Exception {
         Wallet wallet = new Wallet("Watch Only Wallet");
         wallet.setPolicyType(PolicyType.SINGLE_HD);
-        wallet.setScriptType(ScriptType.P2WPKH);
+        wallet.setScriptType(ScriptType.P2PKH);
 
         Keystore keystore = new Keystore("Keystore 1");
         keystore.setSource(KeystoreSource.SW_WATCH);
         keystore.setWalletModel(WalletModel.SPARROW);
-        keystore.setKeyDerivation(new KeyDerivation("60bcd3a7", DERIVATION));
-        keystore.setExtendedPublicKey(ExtendedKey.fromDescriptor(TEST_XPUB));
+        var source = createSeedWallet().getKeystores().getFirst();
+        keystore.setKeyDerivation(source.getKeyDerivation());
+        keystore.setExtendedPublicKey(source.getExtendedPublicKey());
         wallet.getKeystores().add(keystore);
-        wallet.setDefaultPolicy(Policy.getPolicy(PolicyType.SINGLE_HD, ScriptType.P2WPKH, wallet.getKeystores(), null));
+        wallet.setDefaultPolicy(Policy.getPolicy(PolicyType.SINGLE_HD, ScriptType.P2PKH, wallet.getKeystores(), null));
 
         return wallet;
     }
@@ -135,7 +136,7 @@ public class SparrowTest {
         File walletFile = saveWallet(createWatchOnlyWallet(), null);
 
         Wallet imported = importWallet(walletFile, null);
-        Assertions.assertEquals(ExtendedKey.fromDescriptor(TEST_XPUB), imported.getKeystores().getFirst().getExtendedPublicKey());
+        Assertions.assertEquals(createWatchOnlyWallet().getKeystores().getFirst().getExtendedPublicKey(), imported.getKeystores().getFirst().getExtendedPublicKey());
         Assertions.assertDoesNotThrow(imported::checkWallet);
     }
 
@@ -143,7 +144,7 @@ public class SparrowTest {
     public void importDerivesNodeAddresses() throws Exception {
         Wallet wallet = createWatchOnlyWallet();
         for(KeyPurpose keyPurpose : KeyPurpose.DEFAULT_PURPOSES) {
-            wallet.getFreshNode(keyPurpose).setAddress(ScriptType.P2WPKH.getAddress(new byte[20]));
+            wallet.getFreshNode(keyPurpose).setAddress(ScriptType.P2PKH.getAddress(new byte[20]));
         }
         File walletFile = saveWallet(wallet, null);
 
@@ -158,7 +159,7 @@ public class SparrowTest {
     public void importDerivesChildWalletNodeAddresses() throws Exception {
         Wallet wallet = createSeedWallet();
         Wallet childWallet = wallet.addChildWallet(StandardAccount.ACCOUNT_1);
-        childWallet.getFreshNode(KeyPurpose.RECEIVE).setAddress(ScriptType.P2WPKH.getAddress(new byte[20]));
+        childWallet.getFreshNode(KeyPurpose.RECEIVE).setAddress(ScriptType.P2PKH.getAddress(new byte[20]));
 
         Storage storage = new Storage(PersistenceType.DB, tempDir.resolve(wallet.getName() + "." + PersistenceType.DB.getExtension()).toFile());
         storage.setEncryptionPubKey(Storage.NO_PASSWORD_KEY);

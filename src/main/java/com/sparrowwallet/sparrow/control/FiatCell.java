@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.OsType;
@@ -62,7 +63,7 @@ public class FiatCell extends TreeTableCell<Entry, Number> {
                     BigDecimal fiatBalance = btcBalance.multiply(BigDecimal.valueOf(btcRate));
 
                     String label = format.formatCurrencyValue(fiatBalance.doubleValue());
-                    tooltip.setText("1 BTC = " + currency.getSymbol() + " " + format.formatCurrencyValue(btcRate));
+                    tooltip.setText("1 BSV = " + currency.getSymbol() + " " + format.formatCurrencyValue(btcRate));
 
                     setText(label);
                     setGraphic(null);
