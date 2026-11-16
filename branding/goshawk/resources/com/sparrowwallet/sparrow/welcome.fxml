@@ -22,44 +22,44 @@
         </HBox>
         <VBox fx:id="welcomeBox" styleClass="content-area" spacing="20" prefHeight="390">
             <VBox fx:id="step1" spacing="15">
-                <Label text="Introduction" styleClass="title-text">
+                <Label text="BitcoinSV funds wallet" styleClass="title-text">
                     <graphic>
                         <Glyph fontFamily="Font Awesome 5 Free Solid" fontSize="20" icon="TOGGLE_OFF" styleClass="title-icon" />
                     </graphic>
                 </Label>
-                <Label text="Goshawk is an independent BSV wallet project built on Sparrow. This development preview still uses Sparrow's Bitcoin backend; BSV payments are not available yet." wrapText="true" styleClass="content-text" />
-                <Label text="Goshawk can operate in both an online and offline mode. In the online mode it connects to a server to display transaction history. In the offline mode it is useful as a transaction editor and as an airgapped multisig coordinator." wrapText="true" styleClass="content-text" />
-                <Label text="The status bar at the bottom displays the connection status, as demonstrated below:" wrapText="true" styleClass="content-text" />
+                <Label text="Goshawk is a BitcoinSV wallet built on Sparrow. Create and recover P2PKH wallets, inspect transactions, and sign with ForkID." wrapText="true" styleClass="content-text" />
+                <Label text="Development preview. End-to-end payment delivery is not connected yet." wrapText="true" styleClass="content-text" />
+                <Label text="BitcoinSV wallet" wrapText="true" styleClass="content-text" />
             </VBox>
             <VBox fx:id="step2" spacing="15">
-                <Label text="Connecting to a Public Server" styleClass="title-text">
+                <Label text="Receive to an address" styleClass="title-text">
                     <graphic>
                         <Glyph fontFamily="Font Awesome 5 Free Solid" fontSize="20" icon="TOGGLE_ON" styleClass="title-icon" />
                     </graphic>
                 </Label>
-                <Label text="If you are beginning your journey in self custody, or just storing a small amount, the easiest way to connect Goshawk to the Bitcoin blockchain is via one of the preconfigured public Electrum servers. " wrapText="true" styleClass="content-text" />
-                <Label text="However, although Goshawk only connects to servers that have a record of respecting privacy, it is still not ideal as you are sharing your transaction history and balance with them." wrapText="true" styleClass="content-text" />
-                <Label text="A yellow toggle means you are connected to a public server." wrapText="true" styleClass="content-text" />
+                <Label text="Use a BitcoinSV P2PKH address. Ordinary address discovery will use WhatsOnChain." wrapText="true" styleClass="content-text" />
+                <Label text="An address lookup is separate from verification and wallet history recovery." wrapText="true" styleClass="content-text" />
+                <Label text="Address discovery is not available in this preview." wrapText="true" styleClass="content-text" />
             </VBox>
             <VBox fx:id="step3" spacing="15">
-                <Label text="Connecting to a Bitcoin Core node" styleClass="title-text">
+                <Label text="Exchange transactions directly" styleClass="title-text">
                     <graphic>
                         <Glyph fontFamily="Font Awesome 5 Free Solid" fontSize="20" icon="TOGGLE_ON" styleClass="title-icon" />
                     </graphic>
                 </Label>
-                <Label text="If you are running your own Bitcoin Core node, you can configure Goshawk to connect to it directly. " wrapText="true" styleClass="content-text" />
-                <Label text="This means you are not sharing your transaction data, but be aware Bitcoin Core stores your balance, transactions and public keys unencrypted on that node, which is not ideal for true cold storage." wrapText="true" styleClass="content-text" />
-                <Label text="A green toggle means you are connected to a Bitcoin Core node." wrapText="true" styleClass="content-text" />
+                <Label text="Payments will carry transaction dependencies, recipient information and receipts through the BitcoinSV SPV service." wrapText="true" styleClass="content-text" />
+                <Label text="A delivery receipt is separate from admission to a transaction pool and from a block confirmation." wrapText="true" styleClass="content-text" />
+                <Label text="Service integration is in development." wrapText="true" styleClass="content-text" />
             </VBox>
             <VBox fx:id="step4" spacing="15">
-                <Label text="Connecting to a Private Electrum Server" styleClass="title-text">
+                <Label text="Back up and recover" styleClass="title-text">
                     <graphic>
                         <Glyph fontFamily="Font Awesome 5 Free Solid" fontSize="20" icon="TOGGLE_ON" styleClass="title-icon" />
                     </graphic>
                 </Label>
-                <Label text="The most private way to connect is to your own Electrum server, which in turn connects to your Bitcoin Core node." wrapText="true" styleClass="content-text" />
-                <Label text="Because these servers index all Bitcoin transactions equally, your wallet transactions are never stored on the server in an identifiable way, and your server forgets your requests immediately after serving them." wrapText="true" styleClass="content-text" />
-                <Label text="A blue toggle means you are connected to a private Electrum server. You're now ready to configure a server and start using Goshawk!" wrapText="true" styleClass="content-text" />
+                <Label text="Keep your seed or hardware wallet backup, account derivation path, and transaction material." wrapText="true" styleClass="content-text" />
+                <Label text="An account public key is used to pair the selected Ledger. No account fingerprint is substituted for its root fingerprint." wrapText="true" styleClass="content-text" />
+                <Label text="This preview does not connect to Bitcoin servers." wrapText="true" styleClass="content-text" />
             </VBox>
             <Region VBox.vgrow="ALWAYS" />
             <StatusBar fx:id="serverStatus">

@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.transaction;
 
 import com.google.common.eventbus.Subscribe;
@@ -108,8 +109,8 @@ public abstract class TransactionFormController extends BaseController {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
         double percent = 100.0 * (data.getPieValue() / totalSum);
         String satsValue = format.formatSatsValue((long)data.getPieValue()) + " sats";
-        String btcValue = format.formatBtcValue((long)data.getPieValue()) + " BTC";
-        return data.getName() + "\n" + (Config.get().getBitcoinUnit() == BitcoinUnit.BTC ? btcValue : satsValue) + " (" + format.formatDecimalValue(percent, 1) + "%)";
+        String btcValue = format.formatBtcValue((long)data.getPieValue()) + " BSV";
+        return data.getName() + "\n" + (Config.get().getBitcoinUnit() == BitcoinUnit.BSV ? btcValue : satsValue) + " (" + format.formatDecimalValue(percent, 1) + "%)";
     }
 
     private void applyAddressLabelSkinToLegend(PieChart pie) {

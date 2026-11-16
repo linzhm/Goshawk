@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.terminal.wallet;
 
 import com.googlecode.lanterna.TerminalPosition;
@@ -77,7 +78,7 @@ public class Bip39Dialog extends NewWalletDialog {
                 this.scriptType.addItem(new PolicyAndScriptType(policyType, scriptType));
             }
         }
-        scriptType.setSelectedItem(new PolicyAndScriptType(PolicyType.SINGLE_HD, ScriptType.P2WPKH));
+        scriptType.setSelectedItem(new PolicyAndScriptType(PolicyType.SINGLE_HD, ScriptType.P2PKH));
 
         seedWords.setTextChangeListener((newText, changedByUserInteraction) -> {
             try {

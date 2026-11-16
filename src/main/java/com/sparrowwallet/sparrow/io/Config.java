@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.google.gson.*;
@@ -174,7 +175,7 @@ public class Config {
     }
 
     public Server getBlockExplorer() {
-        return blockExplorer;
+        return new Server("https://whatsonchain.com", "WhatsOnChain");
     }
 
     public void setBlockExplorer(Server blockExplorer) {
@@ -183,7 +184,7 @@ public class Config {
     }
 
     public FeeRatesSource getFeeRatesSource() {
-        return feeRatesSource;
+        return FeeRatesSource.ELECTRUM_SERVER;
     }
 
     public void setFeeRatesSource(FeeRatesSource feeRatesSource) {
@@ -223,7 +224,7 @@ public class Config {
     }
 
     public ExchangeSource getExchangeSource() {
-        return exchangeSource;
+        return ExchangeSource.NONE;
     }
 
     public void setExchangeSource(ExchangeSource exchangeSource) {
@@ -531,7 +532,7 @@ public class Config {
     }
 
     public ServerType getServerType() {
-        return serverType;
+        return ServerType.BSV_SPV;
     }
 
     public void setServerType(ServerType serverType) {

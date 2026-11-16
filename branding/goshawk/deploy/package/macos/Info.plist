@@ -80,7 +80,7 @@
               </array>
           </dict>
           <key>UTTypeDescription</key>
-          <string>Partially Signed Bitcoin Transaction</string>
+          <string>Partially Signed BitcoinSV Transaction</string>
           <key>UTTypeIconFile</key>
           <string>goshawk.icns</string>
       </dict>
@@ -95,7 +95,7 @@
               </array>
           </dict>
           <key>UTTypeDescription</key>
-          <string>Bitcoin Transaction</string>
+          <string>BitcoinSV Transaction</string>
           <key>UTTypeIconFile</key>
           <string>goshawk.icns</string>
       </dict>
@@ -127,7 +127,7 @@
             <string>psbt</string>
         </array>
         <key>CFBundleTypeName</key>
-        <string>Partially Signed Bitcoin Transaction</string>
+        <string>Partially Signed BitcoinSV Transaction</string>
         <key>LSHandlerRank</key>
         <string>Default</string>
      </dict>
@@ -141,7 +141,7 @@
             <string>txn</string>
         </array>
         <key>CFBundleTypeName</key>
-        <string>Bitcoin Transaction</string>
+        <string>BitcoinSV Transaction</string>
         <key>LSHandlerRank</key>
         <string>Default</string>
      </dict>

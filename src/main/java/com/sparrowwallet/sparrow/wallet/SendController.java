@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.wallet;
 
 import com.google.common.eventbus.Subscribe;
@@ -366,7 +367,7 @@ public class SendController extends WalletFormController implements Initializabl
         });
 
         BitcoinUnit unit = getBitcoinUnit(Config.get().getBitcoinUnit());
-        feeAmountUnit.getSelectionModel().select(BitcoinUnit.BTC.equals(unit) ? 0 : 1);
+        feeAmountUnit.getSelectionModel().select(BitcoinUnit.BSV.equals(unit) ? 0 : 1);
         fee.setTextFormatter(new CoinTextFormatter(Config.get().getUnitFormat(), feeAmountUnit.getValue()));
         fee.textProperty().addListener(feeListener);
 
@@ -906,7 +907,7 @@ public class SendController extends WalletFormController implements Initializabl
 
     private void setFeeRate(Double feeRateAmt) {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        feeRate.setText(format.getCurrencyFormat().format(feeRateAmt) + (cpfpFeeRate.isVisible() ? "" : " sats/vB"));
+        feeRate.setText(format.getCurrencyFormat().format(feeRateAmt) + (cpfpFeeRate.isVisible() ? "" : " sats/B"));
         setFeeRatePriority(feeRateAmt);
     }
 
@@ -925,10 +926,10 @@ public class SendController extends WalletFormController implements Initializabl
             if(thisRate > effectiveRate) {
                 UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
                 String strEffectiveRate = format.getCurrencyFormat().format(effectiveRate);
-                Tooltip tooltip = new Tooltip("CPFP (Child Pays For Parent)\n" + strEffectiveRate + " sats/vB effective rate");
+                Tooltip tooltip = new Tooltip("CPFP (Child Pays For Parent)\n" + strEffectiveRate + " sats/B effective rate");
                 cpfpFeeRate.setTooltip(tooltip);
                 cpfpFeeRate.setVisible(true);
-                cpfpFeeRate.setText(strEffectiveRate + " sats/vB (CPFP)");
+                cpfpFeeRate.setText(strEffectiveRate + " sats/B (CPFP)");
             } else {
                 cpfpFeeRate.setVisible(false);
             }
@@ -1568,7 +1569,7 @@ public class SendController extends WalletFormController implements Initializabl
     @Subscribe
     public void bitcoinUnitChanged(BitcoinUnitChangedEvent event) {
         BitcoinUnit unit = getBitcoinUnit(event.getBitcoinUnit());
-        feeAmountUnit.getSelectionModel().select(BitcoinUnit.BTC.equals(unit) ? 0 : 1);
+        feeAmountUnit.getSelectionModel().select(BitcoinUnit.BSV.equals(unit) ? 0 : 1);
     }
 
     @Subscribe

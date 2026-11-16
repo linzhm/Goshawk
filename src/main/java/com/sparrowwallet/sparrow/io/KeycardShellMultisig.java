@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.sparrowwallet.drongo.policy.PolicyType;
@@ -15,7 +16,7 @@ public class KeycardShellMultisig extends ColdcardMultisig {
 
     @Override
     public String getKeystoreImportDescription(int account) {
-        return "Import QR created on your Keycard Shell by selecting Connect software wallet > Bitcoin MultiSig";
+        return "Import QR created on your Keycard Shell by selecting Connect software wallet > BitcoinSV MultiSig";
     }
 
     @Override

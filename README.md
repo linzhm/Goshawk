@@ -9,18 +9,23 @@ Goshawk is an independent desktop wallet project for BSV, built on
 [Sparrow Wallet](https://sparrowwallet.com). The first product focuses on
 payments, UTXO control, transaction inspection, and backup and recovery.
 
-**Current status: development preview.** The current implementation is the
-Sparrow foundation with Goshawk branding and isolated application identity.
-It still contains Sparrow's Bitcoin backend. BSV signing, WOC address receipt
-conversion, and peer-to-peer SPV payment delivery are planned, not implemented.
-This is not a usable BSV release.
+**Current status: development preview, offline signing only.** Wallet creation and
+address entry use BitcoinSV P2PKH. Software signing, transaction verification and
+the existing hardware-signing button now use BSV ForkID rules; the Ledger route
+uses the Bitcoin Cash app through Java/Lark. P2SH, SegWit, Taproot and BIP125
+replacement are unavailable. The UI and currency unit use BitcoinSV / BSV.
+
+The former Bitcoin server, price, fee-source and broadcast routes are disabled.
+WOC address discovery and the end-to-end SPV service are not connected yet, so
+this is **not a usable online BSV release**. No Java physical-device, funded
+transaction or external-wallet interoperability result is claimed.
 
 ## Development
 
 ```sh
 git clone --recurse-submodules https://github.com/linzhm/Goshawk.git
 cd Goshawk
-./gradlew test
+./gradlew :test --tests '*BsvWalletSigningTest' :lark:test --tests '*Bsv*Test' --tests '*HIDTransportTest'
 ./goshawk
 ```
 
@@ -38,7 +43,8 @@ Existing Sparrow directories are not migrated or opened automatically.
 ## Product and upstream boundaries
 
 - [Architecture and BSV integration plan](docs/goshawk-architecture.md)
-- [BSV transactions and hardware signing plan](docs/hardware-bsv.md)
+- [BSV transactions and hardware signing](docs/hardware-bsv.md)
+- [Payment compatibility and service boundaries](docs/payment-compatibility.md)
 - [Brand assets and visual identity](docs/brand/README.md)
 - [Upstream synchronization](docs/upstream-maintenance.md)
 - [Modification record](MODIFICATIONS.md)

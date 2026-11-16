@@ -199,6 +199,7 @@ public class ElectrumServer {
     private static final Set<Sha256Hash> unsignedWarnedTxids = ConcurrentHashMap.newKeySet();
 
     private static synchronized CloseableTransport getTransport() throws ServerException {
+        if(Config.get().getServerType() == ServerType.BSV_SPV) throw new ServerConfigException("The BitcoinSV SPV exchange service is not connected. Bitcoin servers and broadcast fallbacks are disabled.");
         if(transport == null) {
             try {
                 Server electrumServer = null;
@@ -2448,7 +2449,7 @@ public class ElectrumServer {
                 return minFeeRate;
             }
 
-            log.warn("Server returned an out of range minimum relay fee of " + minFeeRateBtcKb + " BTC/kB, using default");
+            log.warn("Server returned an out of range minimum relay fee of " + minFeeRateBtcKb + " BSV/kB, using default");
         }
 
         return Transaction.DEFAULT_MIN_RELAY_FEE;
@@ -2540,6 +2541,7 @@ public class ElectrumServer {
     }
 
     public Sha256Hash broadcastTransaction(Transaction transaction, Long fee) throws ServerException {
+        if(Config.get().getServerType() == ServerType.BSV_SPV) throw new ServerException("BitcoinSV payments require a recipient and the SPV exchange service; direct broadcast is disabled");
         //Eagerly populate broadcastedTransactions before broadcasting and roll back on broadcast failure
         Sha256Hash txid = transaction.getTxId();
         BlockTransaction blkTx = new BlockTransaction(txid, 0, null, fee, transaction);
@@ -2558,6 +2560,7 @@ public class ElectrumServer {
     }
 
     public Sha256Hash broadcastTransactionPrivately(Transaction transaction) throws ServerException {
+        if(Config.get().getServerType() == ServerType.BSV_SPV) throw new ServerException("BitcoinSV payments require a recipient and the SPV exchange service; direct broadcast is disabled");
         //If Tor proxy is configured, try all external broadcast sources in random order before falling back to connected Electrum server
         if(AppServices.isUsingProxy()) {
             List<BroadcastSource> broadcastSources = Arrays.stream(BroadcastSource.values()).filter(src -> src.getSupportedNetworks().contains(Network.get())).collect(Collectors.toList());
@@ -2583,6 +2586,7 @@ public class ElectrumServer {
     }
 
     public Sha256Hash broadcastTransaction(Transaction transaction) throws ServerException {
+        if(Config.get().getServerType() == ServerType.BSV_SPV) throw new ServerException("BitcoinSV payments require a recipient and the SPV exchange service; direct broadcast is disabled");
         byte[] rawtxBytes = transaction.bitcoinSerialize();
         String rawtxHex = Utils.bytesToHex(rawtxBytes);
 

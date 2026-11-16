@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Modified for Goshawk BitcoinSV, 2026-11-16. -->
+
 
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -122,7 +124,7 @@
                             <ComboBox fx:id="feeAmountUnit" styleClass="amount-unit">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
-                                        <BitcoinUnit fx:constant="BTC" />
+                                        <BitcoinUnit fx:constant="BSV" />
                                         <BitcoinUnit fx:constant="SATOSHIS" />
                                     </FXCollections>
                                 </items>

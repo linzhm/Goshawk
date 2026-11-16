@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.terminal.wallet;
 
 import com.googlecode.lanterna.TerminalPosition;
@@ -119,7 +120,6 @@ public class WatchOnlyDialog extends NewWalletDialog {
 
     private List<Wallet> getWalletFromXpub(ExtendedKey xpub, ExtendedKey.Header header) {
         Set<ScriptType> scriptTypes = new LinkedHashSet<>();
-        scriptTypes.add(ScriptType.P2WPKH);
         scriptTypes.add(header.getDefaultScriptType());
         scriptTypes.addAll(ScriptType.getAddressableScriptTypes(PolicyType.SINGLE_HD));
 

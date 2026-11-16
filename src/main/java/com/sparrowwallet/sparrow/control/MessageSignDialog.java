@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.google.common.eventbus.Subscribe;
@@ -186,7 +187,7 @@ public class MessageSignDialog extends Dialog<ButtonBar.ButtonData> {
         formatElectrum = new ToggleButton("Standard (Electrum)");
         formatTrezor = new ToggleButton("BIP137 (Trezor)");
         formatBip322 = new ToggleButton("BIP322 (Simple)");
-        SegmentedButton formatButtons = new SegmentedButton(formatElectrum, formatTrezor, formatBip322);
+        SegmentedButton formatButtons = new SegmentedButton(formatElectrum);
         formatButtons.setToggleGroup(formatGroup);
         //The skin only puts the buttons in the group when it is created, after the group listener below that restores a cleared selection.
         //Joining it now keeps each button's Tab stop listener ahead of that one, so a restored selection leaves one Tab stop as before.
@@ -356,19 +357,11 @@ public class MessageSignDialog extends Dialog<ButtonBar.ButtonData> {
     }
 
     private void setFormatFromScriptType(ScriptType scriptType) {
-        formatElectrum.setDisable(scriptType == ScriptType.P2TR);
-        formatTrezor.setDisable(scriptType == ScriptType.P2TR || scriptType == ScriptType.P2PKH);
-        formatBip322.setDisable(scriptType != ScriptType.P2WPKH && scriptType != ScriptType.P2TR);
-        if(scriptType == ScriptType.P2TR) {
-            formatGroup.selectToggle(formatBip322);
-        } else if(formatGroup.getSelectedToggle() == null || scriptType == ScriptType.P2PKH || (scriptType != ScriptType.P2WPKH && formatBip322.isSelected())) {
-            formatGroup.selectToggle(formatElectrum);
-        }
+        formatElectrum.setDisable(scriptType != ScriptType.P2PKH);
+        formatGroup.selectToggle(formatElectrum);
     }
 
-    private boolean isBip322() {
-        return formatBip322.isSelected();
-    }
+    private boolean isBip322() { return false; }
 
     private boolean isElectrumSignatureFormat() {
         return formatElectrum.isSelected();
@@ -461,17 +454,6 @@ public class MessageSignDialog extends Dialog<ButtonBar.ButtonData> {
                     verified = verifyMessage(electrumSignedMessageKey);
                     if(verified) {
                         formatGroup.selectToggle(formatTrezor);
-                    }
-                } catch(SignatureException e) {
-                    //ignore
-                }
-            }
-
-            if(!verified && Bip322.isSupported(getAddress().getScriptType()) && !signature.getText().trim().isEmpty()) {
-                try {
-                    verified = Bip322.verifyMessageBip322(getAddress().getScriptType(), getAddress(), message.getText().trim(), signature.getText().trim());
-                    if(verified) {
-                        formatGroup.selectToggle(formatBip322);
                     }
                 } catch(SignatureException e) {
                     //ignore

@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.wallet;
 
 import com.csvreader.CsvWriter;
@@ -129,11 +130,11 @@ public class UtxosController extends WalletFormController implements Initializab
                 }
 
                 if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-                    unit = (selectedTotal >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+                    unit = (selectedTotal >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
                 }
 
-                if(unit.equals(BitcoinUnit.BTC)) {
-                    sendSelected.setText("Send Selected (" + format.formatBtcValue(selectedTotal) + " BTC)");
+                if(unit.equals(BitcoinUnit.BSV)) {
+                    sendSelected.setText("Send Selected (" + format.formatBtcValue(selectedTotal) + " BSV)");
                 } else {
                     sendSelected.setText("Send Selected (" + format.formatSatsValue(selectedTotal) + " sats)");
                 }
@@ -207,7 +208,7 @@ public class UtxosController extends WalletFormController implements Initializab
 
     private String getCoinValue(Long value) {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        return BitcoinUnit.BTC.equals(utxosTable.getBitcoinUnit()) ? format.tableFormatBtcValue(value) : String.format(Locale.ENGLISH, "%d", value);
+        return BitcoinUnit.BSV.equals(utxosTable.getBitcoinUnit()) ? format.tableFormatBtcValue(value) : String.format(Locale.ENGLISH, "%d", value);
     }
 
     private static Glyph getExternalGlyph() {

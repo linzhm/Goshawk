@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.wallet;
 
 import com.google.common.base.Throwables;
@@ -373,7 +374,7 @@ public class PaymentController extends WalletFormController implements Initializ
             sendController.updateTransaction();
         });
 
-        amountUnit.getSelectionModel().select(BitcoinUnit.BTC.equals(sendController.getBitcoinUnit(Config.get().getBitcoinUnit())) ? 0 : 1);
+        amountUnit.getSelectionModel().select(BitcoinUnit.BSV.equals(sendController.getBitcoinUnit(Config.get().getBitcoinUnit())) ? 0 : 1);
         amount.setTextFormatter(new CoinTextFormatter(Config.get().getUnitFormat(), amountUnit.getValue()));
         amount.textProperty().addListener(amountListener);
 
@@ -941,7 +942,7 @@ public class PaymentController extends WalletFormController implements Initializ
     @Subscribe
     public void bitcoinUnitChanged(BitcoinUnitChangedEvent event) {
         BitcoinUnit unit = sendController.getBitcoinUnit(event.getBitcoinUnit());
-        amountUnit.getSelectionModel().select(BitcoinUnit.BTC.equals(unit) ? 0 : 1);
+        amountUnit.getSelectionModel().select(BitcoinUnit.BSV.equals(unit) ? 0 : 1);
     }
 
     @Subscribe

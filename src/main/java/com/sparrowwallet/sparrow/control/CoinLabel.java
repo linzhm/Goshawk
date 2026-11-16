@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.BitcoinUnit;
@@ -63,14 +64,14 @@ public class CoinLabel extends Label {
 
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
         String satsValue = format.formatSatsValue(value) + " sats";
-        String btcValue = format.formatBtcValue(value) + " BTC";
+        String btcValue = format.formatBtcValue(value) + " BSV";
 
         BitcoinUnit unit = bitcoinUnit;
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
         }
 
-        if(unit.equals(BitcoinUnit.BTC)) {
+        if(unit.equals(BitcoinUnit.BSV)) {
             tooltip.setText(satsValue);
             setText(btcValue);
         } else {
@@ -89,7 +90,7 @@ public class CoinLabel extends Label {
                 Clipboard.getSystemClipboard().setContent(content);
             });
 
-            MenuItem copyBtcValue = new MenuItem("Copy Value in BTC");
+            MenuItem copyBtcValue = new MenuItem("Copy Value in BSV");
             copyBtcValue.setOnAction(AE -> {
                 hide();
                 ClipboardContent content = new ClipboardContent();

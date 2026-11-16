@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.BitcoinUnit;
@@ -37,7 +38,7 @@ public class CopyableCoinLabel extends CopyableLabel {
             }
 
             if(bitcoinUnit == BitcoinUnit.SATOSHIS) {
-                bitcoinUnit = BitcoinUnit.BTC;
+                bitcoinUnit = BitcoinUnit.BSV;
             } else {
                 bitcoinUnit = BitcoinUnit.SATOSHIS;
             }
@@ -85,16 +86,16 @@ public class CopyableCoinLabel extends CopyableLabel {
         }
 
         String satsValue = unitFormat.formatSatsValue(value) + " sats";
-        String btcValue = unitFormat.formatBtcValue(value) + " BTC";
+        String btcValue = unitFormat.formatBtcValue(value) + " BSV";
 
         BitcoinUnit unit = bitcoinUnit;
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
         }
 
         this.bitcoinUnit = unit;
 
-        if(unit.equals(BitcoinUnit.BTC)) {
+        if(unit.equals(BitcoinUnit.BSV)) {
             tooltip.setText(satsValue);
             setText(btcValue);
         } else {
@@ -113,7 +114,7 @@ public class CopyableCoinLabel extends CopyableLabel {
                 Clipboard.getSystemClipboard().setContent(content);
             });
 
-            MenuItem copyBtcValue = new MenuItem("Copy Value in BTC");
+            MenuItem copyBtcValue = new MenuItem("Copy Value in BSV");
             copyBtcValue.setOnAction(AE -> {
                 hide();
                 ClipboardContent content = new ClipboardContent();

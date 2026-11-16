@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.protocol.Transaction;
@@ -147,7 +148,7 @@ public class FeeRangeSlider extends Slider {
     private void updateAccessibleText() {
         //Screen readers announce a slider's value as a percentage of its range, so the fee rate is given in the name
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        setAccessibleText("Fee rate " + format.getCurrencyFormat().format(getFeeRate()) + " sats/vB");
+        setAccessibleText("Fee rate " + format.getCurrencyFormat().format(getFeeRate()) + " sats/B");
     }
 
     public boolean isLongFeeRange() {

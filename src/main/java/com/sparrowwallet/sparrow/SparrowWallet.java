@@ -98,23 +98,8 @@ public class SparrowWallet {
 
         Storage.logApplicationDirs();
 
-        File testnetFlag = new File(Storage.getConfigHome(), "network-" + Network.TESTNET.getName());
-        if(testnetFlag.exists()) {
-            Network.set(Network.TESTNET);
-        }
-
-        File testnet4Flag = new File(Storage.getConfigHome(), "network-" + Network.TESTNET4.getName());
-        if(testnet4Flag.exists()) {
-            Network.set(Network.TESTNET4);
-        }
-
-        File signetFlag = new File(Storage.getConfigHome(), "network-" + Network.SIGNET.getName());
-        if(signetFlag.exists()) {
-            Network.set(Network.SIGNET);
-        }
-
         if(Network.get() != Network.MAINNET) {
-            getLogger().info("Using " + Network.get() + " configuration");
+            throw new IllegalArgumentException("This Goshawk preview supports BitcoinSV mainnet account encoding only");
         }
 
         List<String> fileUriArguments = jCommander.getUnknownOptions();

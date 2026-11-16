@@ -29,20 +29,16 @@
     </rowConstraints>
 
     <Form GridPane.columnIndex="0" GridPane.rowIndex="0">
-        <Fieldset inputGrow="SOMETIMES" text="Bitcoin" styleClass="wideLabelFieldSet">
+        <Fieldset inputGrow="SOMETIMES" text="BitcoinSV" styleClass="wideLabelFieldSet">
             <Field text="Fee rates source:">
                 <ComboBox fx:id="feeRatesSource">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <FeeRatesSource fx:constant="ELECTRUM_SERVER" />
-                            <FeeRatesSource fx:constant="MEMPOOL_SPACE" />
-                            <FeeRatesSource fx:constant="BITVIEW_SPACE" />
-                            <FeeRatesSource fx:constant="BLOCK_XYZ" />
-                            <FeeRatesSource fx:constant="MINIMUM" />
                         </FXCollections>
                     </items>
                 </ComboBox>
-                <HelpLabel helpText="Recommended fee rates can be sourced from your connected Electrum server, or an external source."/>
+                <HelpLabel helpText="BitcoinSV fees are expressed in satoshis per serialized byte. The SPV service will supply the submission quote."/>
             </Field>
             <Field text="Block explorer:">
                 <ComboBox fx:id="blockExplorers" />
@@ -58,9 +54,6 @@
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <ExchangeSource fx:constant="NONE" />
-                            <ExchangeSource fx:constant="COINBASE" />
-                            <ExchangeSource fx:constant="COINGECKO" />
-                            <ExchangeSource fx:constant="MEMPOOL_SPACE" />
                         </FXCollections>
                     </items>
                 </ComboBox>

@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.sparrowwallet.drongo.BitcoinUnit;
@@ -581,11 +582,11 @@ public class TransactionDiagram extends GridPane {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
         BitcoinUnit unit = Config.get().getBitcoinUnit();
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = (amount >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+            unit = (amount >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
         }
 
-        if(unit.equals(BitcoinUnit.BTC)) {
-            return format.formatBtcValue(amount) + " BTC";
+        if(unit.equals(BitcoinUnit.BSV)) {
+            return format.formatBtcValue(amount) + " BSV";
         }
 
         return format.formatSatsValue(amount) + " sats";
@@ -954,7 +955,7 @@ public class TransactionDiagram extends GridPane {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
         Tooltip tooltip = new Tooltip(walletTx.getTransaction().getLength() + " bytes\n"
                 + format.formatDecimalValue(walletTx.getVirtualSize(), 2) + " vBytes"
-                + (walletTx.getFee() < 0 ? "" : "\n" + format.formatDecimalValue(walletTx.getFee() / walletTx.getVirtualSize(), 2) + " sats/vB" + (isFinalized ? "" : " (non-final)")));
+                + (walletTx.getFee() < 0 ? "" : "\n" + format.formatDecimalValue(walletTx.getFee() / walletTx.getVirtualSize(), 2) + " sats/B" + (isFinalized ? "" : " (non-final)")));
         tooltip.setShowDelay(new Duration(TOOLTIP_SHOW_DELAY));
         tooltip.setShowDuration(Duration.INDEFINITE);
         tooltip.getStyleClass().add("transaction-tooltip");
@@ -1280,7 +1281,7 @@ public class TransactionDiagram extends GridPane {
                 content.putString(Long.toString(value));
                 Clipboard.getSystemClipboard().setContent(content);
             });
-            MenuItem copyBtcValue = new MenuItem("Copy Value in BTC");
+            MenuItem copyBtcValue = new MenuItem("Copy Value in BSV");
             copyBtcValue.setOnAction(event -> {
                 hide();
                 ClipboardContent content = new ClipboardContent();

@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.terminal.wallet;
 
 import com.google.common.base.Strings;
@@ -159,7 +160,7 @@ public class WalletDialog extends DialogWindow {
     protected String formatBitcoinValue(long value, boolean appendUnit) {
         BitcoinUnit unit = Config.get().getBitcoinUnit();
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
         }
 
         UnitFormat format = Config.get().getUnitFormat();
@@ -167,7 +168,7 @@ public class WalletDialog extends DialogWindow {
             format = UnitFormat.DOT;
         }
 
-        return unit == BitcoinUnit.SATOSHIS ? format.formatSatsValue(value) + (appendUnit ? " sats" : "") : format.formatBtcValue(value) + (appendUnit ? " BTC" : "");
+        return unit == BitcoinUnit.SATOSHIS ? format.formatSatsValue(value) + (appendUnit ? " sats" : "") : format.formatBtcValue(value) + (appendUnit ? " BSV" : "");
     }
 
     protected String formatFiatValue(Double value) {

@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.terminal.wallet.table;
 
 import com.google.common.base.Strings;
@@ -34,7 +35,7 @@ public class CoinTableCell extends TableCell {
 
         BitcoinUnit unit = Config.get().getBitcoinUnit();
         if(unit == null || unit.equals(BitcoinUnit.AUTO)) {
-            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BTC : BitcoinUnit.SATOSHIS);
+            unit = (value >= BitcoinUnit.getAutoThreshold() ? BitcoinUnit.BSV : BitcoinUnit.SATOSHIS);
         }
 
         UnitFormat format = Config.get().getUnitFormat();

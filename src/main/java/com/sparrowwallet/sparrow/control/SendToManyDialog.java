@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.control;
 
 import com.csvreader.CsvReader;
@@ -167,7 +168,7 @@ public class SendToManyDialog extends Dialog<List<Payment>> {
             long rawAmount = sendToPayment.payment().getAmount();
             Double amount = rawAmount < 0 ? null : bitcoinUnit.getValue(rawAmount);
             SpreadsheetCell amountCell = amountCellType.createCell(row, 1, 1, 1, amount);
-            amountCell.setFormat(bitcoinUnit == BitcoinUnit.BTC ? "0.00000000" : "###,###");
+            amountCell.setFormat(bitcoinUnit == BitcoinUnit.BSV ? "0.00000000" : "###,###");
             amountCell.getStyleClass().add("number-value");
             if(OsType.getCurrent() == OsType.MACOS) {
                 amountCell.getStyleClass().add("number-field");
@@ -479,7 +480,7 @@ public class SendToManyDialog extends Dialog<List<Payment>> {
             String normalised = unitFormat.normaliseGroupingSeparators(str).trim().replaceAll(Pattern.quote(unitFormat.getGroupingSeparator()), "").replaceAll(Pattern.quote(unitFormat.getDecimalSeparator()), ".");
             try {
                 //Read as an exact decimal, which takes the exponent a script writes a small amount with, but not the hexadecimal, NaN or Infinity a double parses
-                BigDecimal sats = new BigDecimal(normalised).scaleByPowerOfTen(bitcoinUnit == BitcoinUnit.BTC ? 8 : 0);
+                BigDecimal sats = new BigDecimal(normalised).scaleByPowerOfTen(bitcoinUnit == BitcoinUnit.BSV ? 8 : 0);
                 //Sized by its digits before the point without rescaling it, as rescaling an exponent far out of range takes minutes
                 long wholeDigits = (long)sats.precision() - sats.scale();
                 if(sats.signum() < 0 || wholeDigits > MAX_SATS_DIGITS) {

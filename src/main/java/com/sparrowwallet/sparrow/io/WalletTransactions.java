@@ -1,3 +1,4 @@
+// Modified for Goshawk BitcoinSV, 2026-11-16.
 package com.sparrowwallet.sparrow.io;
 
 import com.csvreader.CsvWriter;
@@ -138,7 +139,7 @@ public class WalletTransactions implements WalletExport {
 
     private String getCoinValue(BitcoinUnit bitcoinUnit, Long value) {
         UnitFormat format = Config.get().getUnitFormat() == null ? UnitFormat.DOT : Config.get().getUnitFormat();
-        return BitcoinUnit.BTC.equals(bitcoinUnit) ? format.tableFormatBtcValue(value) : String.format(Locale.ENGLISH, "%d", value);
+        return BitcoinUnit.BSV.equals(bitcoinUnit) ? format.tableFormatBtcValue(value) : String.format(Locale.ENGLISH, "%d", value);
     }
 
     private String getFiatValue(Double value) {

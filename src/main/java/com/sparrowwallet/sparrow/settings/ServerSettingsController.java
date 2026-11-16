@@ -1072,10 +1072,10 @@ public class ServerSettingsController extends SettingsDetailController {
     private File getDefaultCoreDataDir() {
         OsType osType = OsType.getCurrent();
         if(osType == OsType.MACOS) {
-            return new File(System.getProperty("user.home") + "/Library/Application Support/Bitcoin");
+            return new File(System.getProperty("user.home") + "/Library/Application Support/BitcoinSV");
         } else if(osType == OsType.WINDOWS) {
-            File oldDir = new File(System.getenv("APPDATA") + "/Bitcoin");
-            return oldDir.exists() ? oldDir : new File(System.getenv("LOCALAPPDATA") + "/Bitcoin");
+            File oldDir = new File(System.getenv("APPDATA") + "/BitcoinSV");
+            return oldDir.exists() ? oldDir : new File(System.getenv("LOCALAPPDATA") + "/BitcoinSV");
         } else {
             return new File(System.getProperty("user.home") + "/.bitcoin");
         }

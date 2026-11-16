@@ -201,12 +201,7 @@ public class GeneralSettingsController extends SettingsDetailController {
     }
 
     private ObservableList<Server> getBlockExplorerList() {
-        List<Server> servers = Arrays.stream(BlockExplorer.values()).map(BlockExplorer::getServer).collect(Collectors.toList());
-        if(Config.get().getBlockExplorer() != null && !servers.contains(Config.get().getBlockExplorer())) {
-            servers.add(Config.get().getBlockExplorer());
-        }
-        servers.add(CUSTOM_BLOCK_EXPLORER);
-        return FXCollections.observableList(servers);
+        return FXCollections.observableArrayList(new Server("https://whatsonchain.com", "WhatsOnChain"));
     }
 
     private void updateCurrencies(ExchangeSource exchangeSource) {
