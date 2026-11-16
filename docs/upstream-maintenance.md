@@ -2,7 +2,11 @@
 
 ## Separation
 
-`upstream` points to Sparrow; `origin` points to the private Goshawk repository.
+`upstream` points to Sparrow; `origin` points to the public GitHub fork
+`linzhm/Goshawk`, whose parent is `sparrowwallet/sparrow`. The native fork
+relationship shares upstream Git history on GitHub. Goshawk changes live on
+`origin/main`; review upstream changes from `upstream/master` using the workflow
+below before integrating them.
 Keep original history and submodule pins. Do not rename Java packages, move
 upstream source trees or rewrite wallet formats merely to change branding.
 
